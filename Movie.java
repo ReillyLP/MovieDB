@@ -33,7 +33,9 @@ public class Movie {
 	public void setStarRating(int starRating) {
 		this.starRating = starRating;
 	}
-	
-	
-	
+
+	@Override
+	public String toString() {
+		return "Movie [title=" + title + ", genre=" + genre + ", starRating=" + starRating + "]";
+	}
 }
