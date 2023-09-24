@@ -35,7 +35,7 @@ public class MainWindow extends JFrame {
 	public static void main(String[] args) {
 		//HashMap used to store Movie objects using their titles as keys
 		//Initial max. capacity of 50 Movies
-		HashMap<String, Movie> movieHashM = new HashMap<String, Movie>(50);
+		HashMap<String, Movie> movieHash = new HashMap<String, Movie>(50);
 		
 		//Creates a list of genre lists
 		ArrayList<ArrayList<String>> genreList = new ArrayList<ArrayList<String>>(); 
@@ -138,26 +138,23 @@ public class MainWindow extends JFrame {
 		contentPane.add(lblRating);
 		
 		JButton btnEntryReset = new JButton("Reset");
+		btnEntryReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Removes text from text box when Reset is clicked
+				textAreaMovieTitle.setText(null);
+			}
+		});
 		btnEntryReset.setToolTipText("Stop an in-progress movie addition and clear fields for next movie");
 		btnEntryReset.setBounds(226, 145, 89, 23);
 		contentPane.add(btnEntryReset);
 		
 		btnAddMovie.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Disable text box on button click if title was entered
-				//Prevents title alteration during Movie creation
-				if(textAreaMovieTitle.getText() != null && ) {
-					textAreaMovieTitle.setEnabled(false);
-					//FIXME: Used for testing
-					textPaneTroubleshootingPrintout.setText(textAreaMovieTitle.getText());
+				//TODO: if title, genre, and rating have been selected (i.e.- all are not null), construct new Movie and add to HashMap
+				if(textAreaMovieTitle.getText() != null) {
 					
 				}
-
-				
 			}
 		});
-		
-		
-
 	}
 }
