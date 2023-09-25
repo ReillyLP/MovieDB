@@ -40,6 +40,9 @@ public class MainWindow extends JFrame {
 			}
 		});
 	}
+	
+
+	
 
 	/**
 	 * Create the frame.
@@ -153,9 +156,7 @@ public class MainWindow extends JFrame {
 		btnEntryReset.setToolTipText("Stop an in-progress movie addition and clear fields for next movie");
 		btnEntryReset.setBounds(226, 188, 89, 23);
 		contentPane.add(btnEntryReset);
-		
-		//Add Movie button starts disabled
-		//Enables after all categories have been provided by user
+
 		JButton btnAddMovie = new JButton("Add Movie");
 		btnAddMovie.setToolTipText("Click after selecting all required movie information to add entry to database");
 		btnAddMovie.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -175,7 +176,7 @@ public class MainWindow extends JFrame {
 					
 					//TODO: add movie to category lists	
 					//FIXME: TEST: used to verify that movie was added to HashMap,
-					//searches HashMap for title currently displayed in Movie Title box
+					//searches Hashmap for title currently displayed in Movie Title box
 					textPaneTroubleshootingPrintout.setText("Movie Added Successfully!\n" 
 					  + movieHash.get(textAreaMovieTitle.getText()).toString());
 				}
