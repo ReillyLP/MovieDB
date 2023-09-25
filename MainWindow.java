@@ -7,9 +7,11 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.FlowLayout;
 import java.awt.BorderLayout;
@@ -21,8 +23,11 @@ import javax.swing.JTextField;
 import java.awt.Font;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JScrollBar;
 
 public class MainWindow extends JFrame {
 
@@ -33,37 +38,6 @@ public class MainWindow extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		//HashMap used to store Movie objects using their titles as keys
-		//Initial max. capacity of 50 Movies
-		HashMap<String, Movie> movieHash = new HashMap<String, Movie>(50);
-		
-		//Creates a list of genre lists
-		ArrayList<ArrayList<String>> genreList = new ArrayList<ArrayList<String>>(); 
-		
-		//Creates default genres to be provided to user
-		//Each genre list contains Movie titles to be used as keys to access HashMap
-		//Max. capacity for each genre is 50 titles
-		ArrayList<String> actionList = new ArrayList<String>(50);
-		ArrayList<String> horrorList = new ArrayList<String>(50);
-		ArrayList<String> comedyList = new ArrayList<String>(50);
-		ArrayList<String> documentaryList = new ArrayList<String>(50);
-		ArrayList<String> sciFiList = new ArrayList<String>(50);
-		ArrayList<String> fantasyList = new ArrayList<String>(50);
-		ArrayList<String> thrillerList = new ArrayList<String>(50);
-		ArrayList<String> dramaList = new ArrayList<String>(50);
-		ArrayList<String> otherList = new ArrayList<String>(50);
-		
-		genreList.add(actionList);
-		genreList.add(horrorList);
-		genreList.add(comedyList);
-		genreList.add(documentaryList);
-		genreList.add(sciFiList);
-		genreList.add(fantasyList);
-		genreList.add(thrillerList);
-		genreList.add(dramaList);
-		genreList.add(otherList);
-		
-		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -79,7 +53,23 @@ public class MainWindow extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MainWindow() {
+	public MainWindow() {		
+		final int MAX_LIST_SIZE = 50;
+		//HashMap used to store Movie objects using their titles as keys
+		//Initial max. capacity of 50 Movies
+		HashMap<String, Movie> movieHash = new HashMap<String, Movie>(MAX_LIST_SIZE);
+		
+		//Each list contains Movie titles to be used as keys to access HashMap
+		ArrayList<String> actionList = new ArrayList<String>(MAX_LIST_SIZE);
+		ArrayList<String> horrorList = new ArrayList<String>(MAX_LIST_SIZE);
+		ArrayList<String> comedyList = new ArrayList<String>(MAX_LIST_SIZE);
+		ArrayList<String> documentaryList = new ArrayList<String>(MAX_LIST_SIZE);
+		ArrayList<String> sciFiList = new ArrayList<String>(MAX_LIST_SIZE);
+		ArrayList<String> fantasyList = new ArrayList<String>(MAX_LIST_SIZE);
+		ArrayList<String> thrillerList = new ArrayList<String>(MAX_LIST_SIZE);
+		ArrayList<String> dramaList = new ArrayList<String>(MAX_LIST_SIZE);
+		ArrayList<String> otherList = new ArrayList<String>(MAX_LIST_SIZE);
+				
 		setResizable(false);
 		setTitle("MainWindow");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -91,11 +81,12 @@ public class MainWindow extends JFrame {
 		contentPane.setLayout(null);
 		
 		JTextArea textAreaMovieTitle = new JTextArea();
+		textAreaMovieTitle.setAlignmentY(Component.TOP_ALIGNMENT);
 		textAreaMovieTitle.setFont(new Font("Tahoma", Font.BOLD, 16));
 		textAreaMovieTitle.setWrapStyleWord(true);
 		textAreaMovieTitle.setLineWrap(true);
 		textAreaMovieTitle.setToolTipText("Type title of movie here");
-		textAreaMovieTitle.setBounds(115, 34, 311, 58);
+		textAreaMovieTitle.setBounds(58, 34, 440, 58);
 		contentPane.add(textAreaMovieTitle);
 		
 		JButton btnAddMovie = new JButton("Add Movie");
@@ -109,13 +100,39 @@ public class MainWindow extends JFrame {
 		JTextPane textPaneTroubleshootingPrintout = new JTextPane();
 		textPaneTroubleshootingPrintout.setBounds(86, 289, 369, 34);
 		contentPane.add(textPaneTroubleshootingPrintout);
+
+		//Creates a list model of genres to be displayed to user via JList
+		DefaultListModel<String> listModGenre = new DefaultListModel<String>();
+		listModGenre.addElement("Action");
+		listModGenre.addElement("Horror");
+		listModGenre.addElement("Comedy");
+		listModGenre.addElement("Documentary");
+		listModGenre.addElement("Sci-Fi");
+		listModGenre.addElement("Fantasy");
+		listModGenre.addElement("Thriller");
+		listModGenre.addElement("Drama");
+		listModGenre.addElement("Other");
 		
-		JList listGenre = new JList();
-		listGenre.setBounds(58, 148, 135, 106);
+		JList<String> listGenre = new JList<String>(listModGenre);
+		listGenre.setBounds(58, 148, 150, 106);
+		listGenre.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		listGenre.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listGenre.setFont(new Font("Tahoma", Font.BOLD, 10));
 		contentPane.add(listGenre);
 		
-		JList listRating = new JList();
-		listRating.setBounds(348, 148, 135, 106);
+		//Creates a list model of star ratings to be displayed to user via JList
+		DefaultListModel<String> listModRating = new DefaultListModel<String>();
+		listModRating.addElement("*");
+		listModRating.addElement("**");
+		listModRating.addElement("***");
+		listModRating.addElement("****");
+		listModRating.addElement("*****");
+		
+		JList<String> listRating = new JList<String>(listModRating);
+		listRating.setBounds(348, 148, 150, 106);
+		listRating.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		listRating.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listRating.setFont(new Font("Tahoma", Font.BOLD, 16));
 		contentPane.add(listRating);
 		
 		JLabel lblGenre = new JLabel("Genre");
@@ -138,6 +155,7 @@ public class MainWindow extends JFrame {
 		contentPane.add(lblRating);
 		
 		JButton btnEntryReset = new JButton("Reset");
+		btnEntryReset.setFocusPainted(false);
 		btnEntryReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Removes text from text box when Reset is clicked
