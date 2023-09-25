@@ -1,7 +1,5 @@
 package main;
 
-import main.Movie;
-
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -11,23 +9,16 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.FlowLayout;
-import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.event.ActionEvent;
-import javax.swing.JTextField;
 import java.awt.Font;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JScrollBar;
 
 public class MainWindow extends JFrame {
 
@@ -53,7 +44,8 @@ public class MainWindow extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MainWindow() {		
+	public MainWindow() {
+					
 		final int MAX_LIST_SIZE = 50;
 		//HashMap used to store Movie objects using their titles as keys
 		//Initial max. capacity of 50 Movies
@@ -86,19 +78,11 @@ public class MainWindow extends JFrame {
 		textAreaMovieTitle.setWrapStyleWord(true);
 		textAreaMovieTitle.setLineWrap(true);
 		textAreaMovieTitle.setToolTipText("Type title of movie here");
-		textAreaMovieTitle.setBounds(58, 34, 440, 58);
+		textAreaMovieTitle.setBounds(160, 36, 221, 71);
 		contentPane.add(textAreaMovieTitle);
 		
-		JButton btnAddMovie = new JButton("Add Movie");
-		btnAddMovie.setToolTipText("Click after selecting all required movie information to add entry to database");
-		btnAddMovie.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnAddMovie.setFocusPainted(false);
-		btnAddMovie.setHorizontalTextPosition(SwingConstants.CENTER);
-		btnAddMovie.setBounds(203, 103, 135, 34);
-		contentPane.add(btnAddMovie);
-		
 		JTextPane textPaneTroubleshootingPrintout = new JTextPane();
-		textPaneTroubleshootingPrintout.setBounds(86, 289, 369, 34);
+		textPaneTroubleshootingPrintout.setBounds(10, 278, 522, 45);
 		contentPane.add(textPaneTroubleshootingPrintout);
 
 		//Creates a list model of genres to be displayed to user via JList
@@ -113,8 +97,10 @@ public class MainWindow extends JFrame {
 		listModGenre.addElement("Drama");
 		listModGenre.addElement("Other");
 		
+		//List allows for one genre to be chosen by user
+		//May be updated at a later time to allow for multiple genres
 		JList<String> listGenre = new JList<String>(listModGenre);
-		listGenre.setBounds(58, 148, 150, 106);
+		listGenre.setBounds(51, 148, 150, 106);
 		listGenre.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		listGenre.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listGenre.setFont(new Font("Tahoma", Font.BOLD, 10));
@@ -129,7 +115,7 @@ public class MainWindow extends JFrame {
 		listModRating.addElement("*****");
 		
 		JList<String> listRating = new JList<String>(listModRating);
-		listRating.setBounds(348, 148, 150, 106);
+		listRating.setBounds(341, 148, 150, 106);
 		listRating.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		listRating.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listRating.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -158,19 +144,40 @@ public class MainWindow extends JFrame {
 		btnEntryReset.setFocusPainted(false);
 		btnEntryReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Removes text from text box when Reset is clicked
+				//Removes any in-progress selections from displayed categories
 				textAreaMovieTitle.setText(null);
+				listGenre.clearSelection();
+				listRating.clearSelection();
 			}
 		});
 		btnEntryReset.setToolTipText("Stop an in-progress movie addition and clear fields for next movie");
-		btnEntryReset.setBounds(226, 145, 89, 23);
+		btnEntryReset.setBounds(226, 188, 89, 23);
 		contentPane.add(btnEntryReset);
+		
+		//Add Movie button starts disabled
+		//Enables after all categories have been provided by user
+		JButton btnAddMovie = new JButton("Add Movie");
+		btnAddMovie.setToolTipText("Click after selecting all required movie information to add entry to database");
+		btnAddMovie.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnAddMovie.setFocusPainted(false);
+		btnAddMovie.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnAddMovie.setBounds(211, 111, 120, 34);
+		contentPane.add(btnAddMovie);
 		
 		btnAddMovie.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO: if title, genre, and rating have been selected (i.e.- all are not null), construct new Movie and add to HashMap
-				if(textAreaMovieTitle.getText() != null) {
+				//If title, genre, and rating have been selected, construct new Movie and add to HashMap
+				if(textAreaMovieTitle.getText() != null && !listGenre.isSelectionEmpty() 
+				  && !listRating.isSelectionEmpty()) {
+					//Adds new Movie to HashMap, uses index of star rating to determine int value
+					movieHash.put(textAreaMovieTitle.getText(), new Movie(textAreaMovieTitle.getText(), 
+					  listGenre.getSelectedValue(), listRating.getSelectedIndex() + 1));
 					
+					//TODO: add movie to category lists	
+					//FIXME: TEST: used to verify that movie was added to HashMap,
+					//searches HashMap for title currently displayed in Movie Title box
+					textPaneTroubleshootingPrintout.setText("Movie Added Successfully!\n" 
+					  + movieHash.get(textAreaMovieTitle.getText()).toString());
 				}
 			}
 		});
