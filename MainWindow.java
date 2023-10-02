@@ -257,6 +257,35 @@ public class MainWindow extends JFrame {
 							"Insufficient Data: Please Provide All Categories");
 				}
 			}
-		});		
+		});
+
+		JButton btnViewDatabase = new JButton("View Database");
+		btnViewDatabase.setToolTipText("Click to view the contents of the database");
+		btnViewDatabase.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnViewDatabase.setFocusPainted(false);
+		btnViewDatabase.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnViewDatabase.setBounds(211, 329, 120, 33);
+		contentPane.add(btnViewDatabase);
+		
+		btnViewDatabase.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        StringBuilder databaseContent = new StringBuilder();
+		        
+		        // Iterate through the titleList and fetch details from the HashMap
+		        for (String title : titleList) {
+		            Movie movie = movieHash.get(title);
+		            databaseContent.append("Title: ").append(movie.getTitle()).append("\n");
+		            databaseContent.append("Genre: ").append(movie.getGenre()).append("\n");
+		            databaseContent.append("Rating: ").append(movie.getStarRating()).append("\n\n");
+		        }
+		        
+		        JTextArea textArea = new JTextArea(databaseContent.toString());
+		        textArea.setEditable(false);
+		        
+		        JScrollPane scrollPane = new JScrollPane(textArea);
+		        
+		        JOptionPane.showMessageDialog(contentPane, scrollPane, "Database Content", JOptionPane.PLAIN_MESSAGE);
+		    }
+		});
 	}
 }
