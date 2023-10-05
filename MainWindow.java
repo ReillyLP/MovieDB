@@ -22,6 +22,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -32,6 +34,16 @@ public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	final int MAX_LIST_SIZE = 50;
+	//HashMap used to store Movie objects using their titles as keys
+	//Initial max. capacity of 50 Movies
+	private HashMap<String, Movie> movieHash = new HashMap<String, Movie>(MAX_LIST_SIZE);
+	
+	//Each list contains Movie titles to be used as keys to access HashMap
+	private ArrayList<String> actionList, horrorList, comedyList, documentaryList, sciFiList;
+	private ArrayList<String>fantasyList, thrillerList, dramaList, otherList, titleList;
+	
+	
 
 	/**
 	 * Launch the application.
@@ -53,28 +65,22 @@ public class MainWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public MainWindow() {
-		final int MAX_LIST_SIZE = 50;
-		//HashMap used to store Movie objects using their titles as keys
-		//Initial max. capacity of 50 Movies
-		HashMap<String, Movie> movieHash = new HashMap<String, Movie>(MAX_LIST_SIZE);
-		
-		//Each list contains Movie titles to be used as keys to access HashMap
-		ArrayList<String> actionList = new ArrayList<String>(MAX_LIST_SIZE);
-		ArrayList<String> horrorList = new ArrayList<String>(MAX_LIST_SIZE);
-		ArrayList<String> comedyList = new ArrayList<String>(MAX_LIST_SIZE);
-		ArrayList<String> documentaryList = new ArrayList<String>(MAX_LIST_SIZE);
-		ArrayList<String> sciFiList = new ArrayList<String>(MAX_LIST_SIZE);
-		ArrayList<String> fantasyList = new ArrayList<String>(MAX_LIST_SIZE);
-		ArrayList<String> thrillerList = new ArrayList<String>(MAX_LIST_SIZE);
-		ArrayList<String> dramaList = new ArrayList<String>(MAX_LIST_SIZE);
-		ArrayList<String> otherList = new ArrayList<String>(MAX_LIST_SIZE);
-		
-		ArrayList<String> titleList = new ArrayList<String>(MAX_LIST_SIZE);
+		this.movieHash = new HashMap<String, Movie>(MAX_LIST_SIZE);
+		this.actionList = new ArrayList<String>(MAX_LIST_SIZE);
+		this.horrorList = new ArrayList<String>(MAX_LIST_SIZE);
+		this.comedyList = new ArrayList<String>(MAX_LIST_SIZE);
+		this. documentaryList = new ArrayList<String>(MAX_LIST_SIZE);
+		this.sciFiList = new ArrayList<String>(MAX_LIST_SIZE);
+		this.fantasyList = new ArrayList<String>(MAX_LIST_SIZE);
+		this.thrillerList = new ArrayList<String>(MAX_LIST_SIZE);
+		this.dramaList = new ArrayList<String>(MAX_LIST_SIZE);
+		this.otherList = new ArrayList<String>(MAX_LIST_SIZE);
+		this.titleList = new ArrayList<String>(MAX_LIST_SIZE);
 				
 		setResizable(false);
 		setTitle("MainWindow");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 558, 373);
+		setBounds(100, 100, 558, 369);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -156,7 +162,7 @@ public class MainWindow extends JFrame {
 			}
 		});
 		btnEntryReset.setToolTipText("Stop an in-progress movie addition and clear fields");
-		btnEntryReset.setBounds(226, 186, 89, 23);
+		btnEntryReset.setBounds(226, 172, 89, 23);
 		contentPane.add(btnEntryReset);
 
 		JButton btnAddMovie = new JButton("Add Movie");
@@ -173,21 +179,24 @@ public class MainWindow extends JFrame {
 		JButton btnSave = new JButton("Save to File");
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					PrintWriter saveToTxt = new PrintWriter("SavedMovies.txt");
-					//Print title, genre, and rating of each Movie on a separate line
-					Movie tempMovie;
-					for(String title : titleList) {
-						tempMovie = movieHash.get(title);
-						saveToTxt.println(tempMovie.getTitle() + " ~ " + tempMovie.getGenre() + " ~ " 
-							+ tempMovie.getStarRating());
+				File savedMovies = new File("SavedMovies.txt");
+
+				if(savedMovies.exists()) {
+					String[] saveOptions = {"Overwrite", "Add", "Cancel"};
+					int userChoice = JOptionPane.showOptionDialog(contentPane, "A saved database already exists!\n"
+							+ "Would you like to overwrite the previous database file\n or add your current movies to the file?", 
+							btnSave.getText(), 0, 3, null, saveOptions, saveOptions[0]);
+					//Overwrites file
+					if (userChoice == 0) {
+						saveToFile(savedMovies, true);
 					}
-					saveToTxt.close();
-					JOptionPane.showMessageDialog(contentPane, 
-							"Movies Saved to File!");
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(contentPane, 
-							"ERROR: Unable to Save Movies to File");
+					//Adds database to file
+					else if(userChoice == 1) {
+						//Loads file to database, then saves combined database back to file
+						loadFile(false, false);
+						saveToFile(savedMovies, false);
+						
+					}
 				}
 			}
 		});
@@ -196,33 +205,33 @@ public class MainWindow extends JFrame {
 		btnSave.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnSave.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnSave.setFocusPainted(false);
-		btnSave.setBounds(211, 241, 120, 33);
+		btnSave.setBounds(51, 265, 120, 33);
 		contentPane.add(btnSave);
+		
+		//TODO: Create a "Clear Database" button with an "Are you sure?" confirmation window
 		
 		JButton btnLoad = new JButton("Load File");
 		btnLoad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				File movieFile = new File("SavedMovies.txt");
-				Scanner fileReader;
-				try {
-					fileReader = new Scanner(movieFile);
-					
-					while(fileReader.hasNextLine()) {
-						String movieData = fileReader.nextLine();
-						//Splits line into individual movie variables
-						//tilde(~) used to split values to prevent splitting of titles containing commas
-						//Elements are as follows: [0]==title, [1]==genre, [2]==starRating
-						String[] movieVars = movieData.split(" ~ ");
-						//Adds each Movie to the HashMap
-						movieHash.put(movieVars[0], new Movie(movieVars[0], movieVars[1], Integer.parseInt(movieVars[2])));
-						//Adds each Movie to the titleList
-						titleList.add(movieVars[0]);
+				//If database contains movies, asks user if they would like to
+				//overwrite the current database, or add movies from the file to the database
+				if(!movieHash.isEmpty()) {
+					String[] loadOptions = {"Overwrite", "Add", "Cancel"};
+					int userChoice = JOptionPane.showOptionDialog(contentPane, "You currently have movies in the database!\n"
+							+ "Would you like to overwrite your database with the saved file\n or add the file to your database?", 
+							btnLoad.getText(), 0, 3, null, loadOptions, loadOptions[0]);
+					//Overwrite current database
+					if(userChoice==0) {
+						loadFile(true, true);
 					}
-					JOptionPane.showMessageDialog(contentPane, 
-							"Movies Loaded Successfully!");
-				} catch (FileNotFoundException e1) {
-					JOptionPane.showMessageDialog(contentPane, 
-							"ERROR: File Not Found");
+					//Add file to database
+					else if(userChoice==1){
+						loadFile(false, true);
+					}
+				}
+				//Default file load when database is already empty
+				else {
+					loadFile(false, true);
 				}
 			}
 		});
@@ -231,7 +240,7 @@ public class MainWindow extends JFrame {
 		btnLoad.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnLoad.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnLoad.setFocusPainted(false);
-		btnLoad.setBounds(211, 285, 120, 33);
+		btnLoad.setBounds(371, 265, 120, 33);
 		contentPane.add(btnLoad);
 		
 		//TODO: Add movies to their respective category lists
@@ -244,8 +253,9 @@ public class MainWindow extends JFrame {
 					//Adds new Movie to HashMap, uses index of star rating to determine int value
 					movieHash.put(movieTitle, new Movie(movieTitle, listGenre.getSelectedValue(), 
 						listRating.getSelectedIndex() + 1));
-					
-					if(titleList.size() < MAX_LIST_SIZE) {
+					//Add title if titleList is below max. capacity and title is not already in list
+					//TODO: separate the two logical statements into else-if's and print error message specific to each
+					if(titleList.size() < MAX_LIST_SIZE && !titleList.contains(movieTitle)) {
 						titleList.add(movieTitle);
 					}
 					
@@ -259,24 +269,43 @@ public class MainWindow extends JFrame {
 			}
 		});
 
-		JButton btnViewDatabase = new JButton("View Database");
-		btnViewDatabase.setToolTipText("Click to view the contents of the database");
-		btnViewDatabase.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnViewDatabase.setFocusPainted(false);
-		btnViewDatabase.setHorizontalTextPosition(SwingConstants.CENTER);
-		btnViewDatabase.setBounds(211, 329, 120, 33);
-		contentPane.add(btnViewDatabase);
+		JButton btnviewDB = new JButton("View Database");
+		btnviewDB.setToolTipText("Click to view the contents of the database");
+		btnviewDB.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnviewDB.setFocusPainted(false);
+		btnviewDB.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnviewDB.setBounds(203, 265, 135, 33);
+		contentPane.add(btnviewDB);
 		
-		btnViewDatabase.addActionListener(new ActionListener() {
+		JButton btnClearDB = new JButton("Clear Database");
+		btnClearDB.setToolTipText("Clears all movies from the database");
+		btnClearDB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int userChoice = JOptionPane.showConfirmDialog(contentPane, "Are you sure?\n This will delete all database contents",
+						btnClearDB.getText(), JOptionPane.YES_NO_OPTION);
+				if (userChoice == JOptionPane.YES_OPTION) {
+					clearDB();
+				    JOptionPane.showMessageDialog(contentPane, "Database Cleared!");
+				}
+			}
+		});
+		btnClearDB.setBounds(203, 206, 135, 23);
+		contentPane.add(btnClearDB);
+		
+		btnviewDB.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        StringBuilder databaseContent = new StringBuilder();
-		        
 		        // Iterate through the titleList and fetch details from the HashMap
 		        for (String title : titleList) {
-		            Movie movie = movieHash.get(title);
-		            databaseContent.append("Title: ").append(movie.getTitle()).append("\n");
-		            databaseContent.append("Genre: ").append(movie.getGenre()).append("\n");
-		            databaseContent.append("Rating: ").append(movie.getStarRating()).append("\n\n");
+		        	//Prevents duplicates by checking database for title
+		        	//Does not append to databaseContent if title is already present
+		        	if(!databaseContent.toString().contains(title)) {
+		        		Movie movie = movieHash.get(title);
+		        		databaseContent.append("Title: ").append(movie.getTitle()).append("\n");
+		        		databaseContent.append("Genre: ").append(movie.getGenre()).append("\n");
+		        		databaseContent.append("Rating: ").append(movie.getStarRating()).append("\n\n");
+		        	}
+		            
 		        }
 		        
 		        JTextArea textArea = new JTextArea(databaseContent.toString());
@@ -286,6 +315,104 @@ public class MainWindow extends JFrame {
 		        
 		        JOptionPane.showMessageDialog(contentPane, scrollPane, "Database Content", JOptionPane.PLAIN_MESSAGE);
 		    }
+	    
 		});
+		
+		
+	}	//End of default constructor
+	//Beginning of methods
+	
+	//Clears HashMap and all lists from current database
+	private void clearDB() {
+		this.movieHash.clear();
+		this.actionList.clear();
+		this.horrorList.clear();
+		this.comedyList.clear();
+		this.documentaryList.clear();
+		this.sciFiList.clear();
+		this.fantasyList.clear();
+		this.thrillerList.clear();
+		this.dramaList.clear();
+		this.otherList.clear();
+		this.titleList.clear();
+	}
+	//Loads .txt file contents into HashMap
+	private void loadFile(boolean overwriteRequested, boolean successMsgRequested) {
+		//Overwrites current database with contents in load file by first clearing database 
+		//TODO: Requires testing
+		if(overwriteRequested) {
+			this.clearDB();
+		}
+		
+		File savedMovies = new File("SavedMovies.txt");
+		Scanner fileReader;
+		try {
+			fileReader = new Scanner(savedMovies);
+			
+			/*
+			 * TODO: 
+			 * Determine if user's saved file is in valid format.
+			 * Try searching Genre text box for valid genre Strings before adding to HashMap
+			 * Verify that rating is between 1-5.
+			 * Enforce max. amount of char's in title?
+			 */
+			
+			while(fileReader.hasNextLine()) {
+				String movieData = fileReader.nextLine();
+				//Splits line into individual movie variables
+				//tilde(~) used to split values to prevent splitting of titles containing commas
+				//Elements are as follows: [0]==title, [1]==genre, [2]==starRating
+				String[] movieVars = movieData.split(" ~ ");
+				String title = movieVars[0];
+				//Adds each Movie to the HashMap
+				this.movieHash.put(title, new Movie(title, movieVars[1], Integer.parseInt(movieVars[2])));
+				//Adds each Movie to the titleList after verifying that it is not already present
+				if(!this.titleList.contains(title)) {
+					this.titleList.add(title);
+				}
+				/*
+				 * NOTE: If title is already present in titleList, duplicate movie entries
+				 * will overwrite the existing movie's genre and rating in the HashMap 
+				 * with the user's newest input.
+				 */
+			}
+			if(overwriteRequested) {
+				JOptionPane.showMessageDialog(contentPane, 
+						"Database Overwrite Successful!");
+			}
+			else if(successMsgRequested) {
+				JOptionPane.showMessageDialog(contentPane, 
+						"File Load Successful!");
+			}
+		} catch (FileNotFoundException e1) {
+			JOptionPane.showMessageDialog(contentPane, 
+					"ERROR: File Not Found");
+		}
+	}
+	
+	private void saveToFile(File saveFile, boolean overwriteRequested) {
+		try {
+			PrintWriter saveToTxt = new PrintWriter(saveFile);
+			//Print title, genre, and rating of each Movie on a separate line
+			Movie tempMovie;
+			for(String title : titleList) {
+				tempMovie = movieHash.get(title);
+				saveToTxt.println(tempMovie.getTitle() + " ~ " + tempMovie.getGenre() + " ~ " 
+					+ tempMovie.getStarRating());
+			}
+			saveToTxt.close();
+			if(overwriteRequested) {
+				JOptionPane.showMessageDialog(contentPane, 
+						"File Overwrite Successful!");
+			}
+			else {
+				JOptionPane.showMessageDialog(contentPane, 
+					"Movies Saved to File!");
+			}
+			
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(contentPane, 
+					"ERROR: Unable to Save Movies to File");
+		}
 	}
 }
