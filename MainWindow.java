@@ -360,6 +360,12 @@ public class MainWindow extends JFrame {
 		this.dramaList.clear();
 		this.otherList.clear();
 		this.titleList.clear();
+		
+		this.oneStarList.clear();
+		this.twoStarList.clear();
+		this.threeStarList.clear();
+		this.fourStarList.clear();
+		this.fiveStarList.clear();
 	}
 	//Loads .txt file contents into HashMap
 	private void loadFile(boolean overwriteRequested, boolean successMsgRequested) {
