@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -18,12 +19,15 @@ import java.awt.Font;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.JList;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 public class MainWindow extends JFrame {
 
@@ -94,7 +98,7 @@ public class MainWindow extends JFrame {
 		textAreaMovieTitle.setWrapStyleWord(true);
 		textAreaMovieTitle.setLineWrap(true);
 		textAreaMovieTitle.setToolTipText("Type movie title here");
-		textAreaMovieTitle.setBounds(160, 36, 221, 71);
+		textAreaMovieTitle.setBounds(159, 57, 221, 71);
 		contentPane.add(textAreaMovieTitle);
 
 		//Creates a list model of genres to be displayed to user via JList
@@ -113,7 +117,7 @@ public class MainWindow extends JFrame {
 		//List allows for one genre to be chosen by user
 		//May be updated at a later time to allow for multiple genres
 		JList<String> listGenre = new JList<String>(listModGenre);
-		listGenre.setBounds(51, 148, 150, 106);
+		listGenre.setBounds(50, 169, 150, 106);
 		listGenre.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		listGenre.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listGenre.setFont(new Font("Tahoma", Font.BOLD, 10));
@@ -128,7 +132,7 @@ public class MainWindow extends JFrame {
 		listModRating.addElement("*****");
 		
 		JList<String> listRating = new JList<String>(listModRating);
-		listRating.setBounds(341, 148, 150, 106);
+		listRating.setBounds(340, 169, 150, 106);
 		listRating.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		listRating.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listRating.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -143,7 +147,7 @@ public class MainWindow extends JFrame {
 		JLabel lblTitle = new JLabel("Movie Title");
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitle.setBounds(203, 11, 135, 14);
+		lblTitle.setBounds(202, 32, 135, 14);
 		contentPane.add(lblTitle);
 		
 		JLabel lblRating = new JLabel("Star Rating");
@@ -164,7 +168,7 @@ public class MainWindow extends JFrame {
 			}
 		});
 		btnEntryReset.setToolTipText("Stop an in-progress movie addition and clear fields");
-		btnEntryReset.setBounds(226, 172, 89, 23);
+		btnEntryReset.setBounds(225, 193, 89, 23);
 		contentPane.add(btnEntryReset);
 
 		JButton btnAddMovie = new JButton("Add Movie");
@@ -172,7 +176,7 @@ public class MainWindow extends JFrame {
 		btnAddMovie.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnAddMovie.setFocusPainted(false);
 		btnAddMovie.setHorizontalTextPosition(SwingConstants.CENTER);
-		btnAddMovie.setBounds(211, 118, 120, 33);
+		btnAddMovie.setBounds(210, 139, 120, 33);
 		
 		contentPane.add(btnAddMovie);
 		//TODO: Add movies to their respective category lists
@@ -220,46 +224,40 @@ public class MainWindow extends JFrame {
 				
 					}
 				});
+	
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 542, 22);
 		
-		//Saves data from each Movie in a .txt file
-		//Iterates through titleList for movieHash keys
-		//tilde(~) used to split values to prevent splitting of titles with commas
-		JButton btnSave = new JButton("Save to File");
-		btnSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				File savedMovies = new File("SavedMovies.txt");
-
-				if(savedMovies.exists()) {
-					String[] saveOptions = {"Overwrite", "Add", "Cancel"};
-					int userChoice = JOptionPane.showOptionDialog(contentPane, "A saved database already exists!\n"
-							+ "Would you like to overwrite the previous database file\n or add your current movies to the file?", 
-							btnSave.getText(), 0, 3, null, saveOptions, saveOptions[0]);
-					//Overwrites file
-					if (userChoice == 0) {
-						saveToFile(savedMovies, true);
-					}
-					//Adds database to file
-					else if(userChoice == 1) {
-						//Loads file to database, then saves combined database back to file
-						loadFile(false, false);
-						saveToFile(savedMovies, false);
-						
-					}
-				}
-			}
-		});
+		JMenu fileMenu = new JMenu("File");
+		JMenuItem saveMenuItem = new JMenuItem("Save");
+		JMenuItem loadMenuItem = new JMenuItem("Load");
+		JMenuItem clearMenuItem = new JMenuItem("Clear");
+		fileMenu.add(saveMenuItem);
+		fileMenu.add(loadMenuItem);
+		fileMenu.add(clearMenuItem);
 		
-		btnSave.setToolTipText("Click to save movies to file");
-		btnSave.setHorizontalTextPosition(SwingConstants.CENTER);
-		btnSave.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnSave.setFocusPainted(false);
-		btnSave.setBounds(51, 265, 120, 33);
-		contentPane.add(btnSave);
+		//TODO: Displays the database
+		JMenu viewMenu = new JMenu("View");
+		//TODO: Searches the database
+		JMenu searchMenu = new JMenu("Search");
 		
-		//TODO: Create a "Clear Database" button with an "Are you sure?" confirmation window
 		
-		JButton btnLoad = new JButton("Load File");
-		btnLoad.addActionListener(new ActionListener() {
+		
+		JMenuItem databaseMenuItem = new JMenuItem("Database");
+		
+		
+		
+		viewMenu.add(databaseMenuItem);
+		
+		menuBar.setAlignmentX(LEFT_ALIGNMENT);
+		menuBar.add(fileMenu);
+		menuBar.add(viewMenu);
+		menuBar.add(searchMenu);
+		contentPane.add(menuBar);
+		
+		
+		
+		loadMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//If database contains movies, asks user if they would like to
 				//overwrite the current database, or add movies from the file to the database
@@ -267,7 +265,7 @@ public class MainWindow extends JFrame {
 					String[] loadOptions = {"Overwrite", "Add", "Cancel"};
 					int userChoice = JOptionPane.showOptionDialog(contentPane, "You currently have movies in the database!\n"
 							+ "Would you like to overwrite your database with the saved file\n or add the file to your database?", 
-							btnLoad.getText(), 0, 3, null, loadOptions, loadOptions[0]);
+							"Load File", 0, 3, null, loadOptions, loadOptions[0]);
 					//Overwrite current database
 					if(userChoice==0) {
 						loadFile(true, true);
@@ -284,41 +282,46 @@ public class MainWindow extends JFrame {
 				//FIXME: testing
 				printCategoryLists();
 			}
-			
+
 		});
 		
-		btnLoad.setToolTipText("Click to load movies from existing file");
-		btnLoad.setHorizontalTextPosition(SwingConstants.CENTER);
-		btnLoad.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnLoad.setFocusPainted(false);
-		btnLoad.setBounds(371, 265, 120, 33);
-		contentPane.add(btnLoad);
+		saveMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					File savedMovies = new File("SavedMovies.txt");
+
+					if(savedMovies.exists()) {
+						String[] saveOptions = {"Overwrite", "Add", "Cancel"};
+						int userChoice = JOptionPane.showOptionDialog(contentPane, "A saved database already exists!\n"
+								+ "Would you like to overwrite the previous database file\n or add your current movies to the file?", 
+								"Save to File", 0, 3, null, saveOptions, saveOptions[0]);
+						//Overwrites file
+						if (userChoice == 0) {
+							saveToFile(savedMovies, true);
+						}
+						//Adds database to file
+						else if(userChoice == 1) {
+							//Loads file to database, then saves combined database back to file
+							loadFile(false, false);
+							saveToFile(savedMovies, false);
+							
+						}
+					}
+				}
+			});
 		
-		JButton btnClearDB = new JButton("Clear Database");
-		btnClearDB.setToolTipText("Clears all movies from the database");
-		btnClearDB.addActionListener(new ActionListener() {
+		clearMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int userChoice = JOptionPane.showConfirmDialog(contentPane, "Are you sure?\n This will delete all database contents",
-						btnClearDB.getText(), JOptionPane.YES_NO_OPTION);
+						"Clear Database", JOptionPane.YES_NO_OPTION);
 				if (userChoice == JOptionPane.YES_OPTION) {
 					clearDB();
 				    JOptionPane.showMessageDialog(contentPane, "Database Cleared!");
 				}
 			}
 		});
-		btnClearDB.setBounds(203, 206, 135, 23);
-		contentPane.add(btnClearDB);
 		
-		JButton btnViewDB = new JButton("View Database");
-		btnViewDB.setToolTipText("Click to view the contents of the database");
-		btnViewDB.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnViewDB.setFocusPainted(false);
-		btnViewDB.setHorizontalTextPosition(SwingConstants.CENTER);
-		btnViewDB.setBounds(203, 265, 135, 33);
-		contentPane.add(btnViewDB);
-		
-		btnViewDB.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
+		databaseMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 		        StringBuilder databaseContent = new StringBuilder();
 		        // Iterate through the titleList and fetch details from the HashMap
 		        for (String title : titleList) {
@@ -344,7 +347,8 @@ public class MainWindow extends JFrame {
 		});
 		
 		
-	}	//End of default constructor
+	}//End of default constructor
+	
 	//Beginning of methods
 	
 	//Clears HashMap and all lists from current database
@@ -591,5 +595,31 @@ public class MainWindow extends JFrame {
 		System.out.println("Three: " + threeStarList.toString());
 		System.out.println("Four: " + fourStarList.toString());
 		System.out.println("Five: " + fiveStarList.toString());
+	}
+	
+	//TODO: create method that displays database depending on the category list requested 
+	//(or the entire database, if needed)
+	private void displayByCategory(ArrayList<String> categoryList) {
+		 StringBuilder databaseContent = new StringBuilder();
+	        // Iterate through the categoryList and fetch details from the HashMap
+	        for (String title : categoryList) {
+	        	//Prevents duplicates by checking database for title
+	        	//Does not append to databaseContent if title is already present
+	        	if(!databaseContent.toString().contains(title)) {
+	        		Movie movie = movieHash.get(title);
+	        		databaseContent.append("Title: ").append(movie.getTitle()).append("\n");
+	        		databaseContent.append("Genre: ").append(movie.getGenre()).append("\n");
+	        		databaseContent.append("Rating: ").append(movie.getStarRating()).append("\n\n");
+	        	}
+	            
+	        }
+	        
+	        JTextArea textArea = new JTextArea(databaseContent.toString());
+	        textArea.setEditable(false);
+	        
+	        JScrollPane scrollPane = new JScrollPane(textArea);
+	        
+	        JOptionPane.showMessageDialog(contentPane, scrollPane, "Database Content", JOptionPane.PLAIN_MESSAGE);
+
 	}
 }
