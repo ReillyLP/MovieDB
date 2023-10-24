@@ -28,11 +28,12 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JLayeredPane;
 
 public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
+	private JPanel contentPane, welcomePanel;
 	final int MAX_LIST_SIZE = 50;
 	//HashMap used to store Movie objects using their titles as keys
 	//Initial max. capacity of 50 Movies
@@ -50,7 +51,7 @@ public class MainWindow extends JFrame {
 			public void run() {
 				try {
 					MainWindow frame = new MainWindow();
-					frame.setVisible(true);
+					frame.setVisible(true);					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -81,16 +82,68 @@ public class MainWindow extends JFrame {
 		this.fourStarList = new ArrayList<String>(MAX_LIST_SIZE);
 		this.fiveStarList = new ArrayList<String>(MAX_LIST_SIZE);
 				
-				
 		setResizable(false);
 		setTitle("MainWindow");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 558, 369);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		welcomePanel = new JPanel();
+		welcomePanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+		welcomePanel.setBounds(0, 0, 542, 330);
+		setContentPane(welcomePanel);
+		welcomePanel.setLayout(null);
+		
+		JLabel lblWelcome = new JLabel("Welcome!");
+		lblWelcome.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWelcome.setFont(new Font("Tahoma", Font.BOLD, 22));
+		lblWelcome.setBounds(208, 39, 125, 33);
+		welcomePanel.add(lblWelcome);
+		
+		JLabel lblWelcomeLn1 = new JLabel("Would you like to create a new database,");
+		lblWelcomeLn1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWelcomeLn1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblWelcomeLn1.setBounds(118, 106, 305, 26);
+		welcomePanel.add(lblWelcomeLn1);
+		
+		JLabel lblWelcomeLn2 = new JLabel("or load a previous database file?");
+		lblWelcomeLn2.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblWelcomeLn2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWelcomeLn2.setBounds(123, 132, 295, 26);
+		welcomePanel.add(lblWelcomeLn2);
+		
+		JButton btnNew = new JButton("New");
+		btnNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(welcomePanel, 
+						"Starting new database\n You may now add your movies!");
+				//Removes ability to see or interact with welcome panel
+				welcomePanel.setVisible(false);
+				welcomePanel.setEnabled(false);
+				setContentPane(contentPane);
+			}
+		});
+		btnNew.setFont(new Font("Tahoma", Font.BOLD, 14));
+		btnNew.setBounds(118, 209, 104, 38);
+		welcomePanel.add(btnNew);
+		
+		JButton btnLoad = new JButton("Load");
+		btnLoad.setFont(new Font("Tahoma", Font.BOLD, 14));
+		btnLoad.setBounds(319, 209, 104, 38);
+		welcomePanel.add(btnLoad);
+		btnLoad.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(welcomePanel, 
+						"Attempting to load database...");
+				//Removes ability to see or interact with welcome panel
+				welcomePanel.setVisible(false);
+				welcomePanel.setEnabled(false);
+				setContentPane(contentPane);
+				loadFile(false, true);
+			}
+		});
 		
 		JTextArea textAreaMovieTitle = new JTextArea();
 		textAreaMovieTitle.setAlignmentY(Component.TOP_ALIGNMENT);
@@ -241,11 +294,7 @@ public class MainWindow extends JFrame {
 		//TODO: Searches the database
 		JMenu searchMenu = new JMenu("Search");
 		
-		
-		
 		JMenuItem databaseMenuItem = new JMenuItem("Database");
-		
-		
 		
 		viewMenu.add(databaseMenuItem);
 		
@@ -254,8 +303,6 @@ public class MainWindow extends JFrame {
 		menuBar.add(viewMenu);
 		menuBar.add(searchMenu);
 		contentPane.add(menuBar);
-		
-		
 		
 		loadMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -412,11 +459,11 @@ public class MainWindow extends JFrame {
 				 */
 			}
 			if(overwriteRequested) {
-				JOptionPane.showMessageDialog(contentPane, 
+				JOptionPane.showMessageDialog(this, 
 						"Database Overwrite Successful!");
 			}
 			else if(successMsgRequested) {
-				JOptionPane.showMessageDialog(contentPane, 
+				JOptionPane.showMessageDialog(this, 
 						"File Load Successful!");
 			}
 			//After file has successfully loaded, update lists with new movies
@@ -430,7 +477,7 @@ public class MainWindow extends JFrame {
 			}
 			
 		} catch (FileNotFoundException e1) {
-			JOptionPane.showMessageDialog(contentPane, 
+			JOptionPane.showMessageDialog(this, 
 					"ERROR: File Not Found");
 		}
 	}
@@ -447,16 +494,16 @@ public class MainWindow extends JFrame {
 			}
 			saveToTxt.close();
 			if(overwriteRequested) {
-				JOptionPane.showMessageDialog(contentPane, 
+				JOptionPane.showMessageDialog(this, 
 						"File Overwrite Successful!");
 			}
 			else {
-				JOptionPane.showMessageDialog(contentPane, 
+				JOptionPane.showMessageDialog(this, 
 					"Movies Saved to File!");
 			}
 			
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(contentPane, 
+			JOptionPane.showMessageDialog(this, 
 					"ERROR: Unable to Save Movies to File");
 		}
 	}
