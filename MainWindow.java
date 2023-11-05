@@ -292,10 +292,10 @@ public class MainWindow extends JFrame {
 		//TODO: Displays the database
 		JMenu viewMenu = new JMenu("View");
 		
-		JMenuItem byTitle = new JMenuItem("By Title");
+		JMenuItem byTitle = new JMenuItem("All Movies");
 		byTitle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO: display by title
+				 displayByCategory(titleList);
 				
 			}
 		});
@@ -303,71 +303,103 @@ public class MainWindow extends JFrame {
 		JMenu byGenre = new JMenu("By Genre");
 		JMenu byRating = new JMenu("By Rating");
 		
-	
+		//Creates genres for byGenre Menu
 		JMenuItem horrorMenuItem = new JMenuItem("Horror");
 		horrorMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayByCategory(horrorList);
-				
+				displayByCategory(horrorList);				
 			}
 		});
 		
 		JMenuItem actionMenuItem = new JMenuItem("Action");
 		actionMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayByCategory(actionList);
-				
+				displayByCategory(actionList);				
 			}
 		});
 		
 		JMenuItem comedyMenuItem = new JMenuItem("Comedy");
 		comedyMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayByCategory(comedyList);
-				
+				displayByCategory(comedyList);				
 			}
 		});
 		
 		JMenuItem documentaryMenuItem = new JMenuItem("Documentary");
 		documentaryMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayByCategory(documentaryList);
-				
+				displayByCategory(documentaryList);				
 			}
 		});
 		JMenuItem sciFiMenuItem = new JMenuItem("Sci-Fi");
 		sciFiMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayByCategory(sciFiList);
-				
+				displayByCategory(sciFiList);				
 			}
 		});
 		JMenuItem fantasyMenuItem = new JMenuItem("Fantasy");
 		fantasyMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayByCategory(fantasyList);
-				
+				displayByCategory(fantasyList);				
 			}
 		});
 		JMenuItem thrillerMenuItem = new JMenuItem("Thriller");
 		thrillerMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayByCategory(thrillerList);
-				
+				displayByCategory(thrillerList);				
 			}
 		});
 		JMenuItem dramaMenuItem = new JMenuItem("Drama");
 		dramaMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayByCategory(dramaList);
-				
+				displayByCategory(dramaList);				
 			}
 		});
 		JMenuItem otherMenuItem = new JMenuItem("Other");
 		otherMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayByCategory(otherList);
-				
+				displayByCategory(otherList);				
+			}
+		});
+		
+		//Creates Star Ratings for byRating Menu
+		JMenuItem oneStarMenuItem = new JMenuItem("*");
+		oneStarMenuItem.setFont(new Font("Tahoma", Font.BOLD, 16));
+		oneStarMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(oneStarList);				
+			}
+		});
+		
+		JMenuItem twoStarMenuItem = new JMenuItem("**");
+		twoStarMenuItem.setFont(new Font("Tahoma", Font.BOLD, 16));
+		twoStarMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(twoStarList);				
+			}
+		});
+		
+		JMenuItem threeStarMenuItem = new JMenuItem("***");
+		threeStarMenuItem.setFont(new Font("Tahoma", Font.BOLD, 16));
+		threeStarMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(threeStarList);				
+			}
+		});
+		
+		JMenuItem fourStarMenuItem = new JMenuItem("****");
+		fourStarMenuItem.setFont(new Font("Tahoma", Font.BOLD, 16));
+		fourStarMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(fourStarList);
+			}
+		});
+		
+		JMenuItem fiveStarMenuItem = new JMenuItem("*****");
+		fiveStarMenuItem.setFont(new Font("Tahoma", Font.BOLD, 16));
+		fiveStarMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(fiveStarList);
 			}
 		});
 		
@@ -382,8 +414,17 @@ public class MainWindow extends JFrame {
 		byGenre.add(dramaMenuItem);
 		byGenre.add(otherMenuItem);
 		
+		
+		byRating.add(oneStarMenuItem);
+		byRating.add(twoStarMenuItem);
+		byRating.add(threeStarMenuItem);
+		byRating.add(fourStarMenuItem);
+		byRating.add(fiveStarMenuItem);
+		
 		viewMenu.add(byTitle);
 		viewMenu.add(byGenre);
+		viewMenu.add(byRating);
+		
 		//TODO: Searches the database
 		JMenu searchMenu = new JMenu("Search");
 		
@@ -454,15 +495,7 @@ public class MainWindow extends JFrame {
 				    JOptionPane.showMessageDialog(contentPane, "Database Cleared!");
 				}
 			}
-		});
-		
-		byTitle.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				displayByCategory(titleList);
-		    }    
-		});
-		
-		
+		});		
 	}//End of default constructor
 	
 	//Beginning of methods
