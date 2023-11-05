@@ -10,7 +10,6 @@ import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.Component;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -28,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JLayeredPane;
 
 public class MainWindow extends JFrame {
 
@@ -62,25 +60,25 @@ public class MainWindow extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	//TODO: can "this" statement be removed?
+
 	public MainWindow() {
-		this.movieHash = new HashMap<String, Movie>(MAX_LIST_SIZE);
-		this.actionList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.horrorList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.comedyList = new ArrayList<String>(MAX_LIST_SIZE);
-		this. documentaryList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.sciFiList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.fantasyList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.thrillerList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.dramaList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.otherList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.titleList = new ArrayList<String>(MAX_LIST_SIZE);
+		movieHash = new HashMap<String, Movie>(MAX_LIST_SIZE);
+		actionList = new ArrayList<String>(MAX_LIST_SIZE);
+		horrorList = new ArrayList<String>(MAX_LIST_SIZE);
+		comedyList = new ArrayList<String>(MAX_LIST_SIZE);
+		documentaryList = new ArrayList<String>(MAX_LIST_SIZE);
+		sciFiList = new ArrayList<String>(MAX_LIST_SIZE);
+		fantasyList = new ArrayList<String>(MAX_LIST_SIZE);
+		thrillerList = new ArrayList<String>(MAX_LIST_SIZE);
+		dramaList = new ArrayList<String>(MAX_LIST_SIZE);
+		otherList = new ArrayList<String>(MAX_LIST_SIZE);
+		titleList = new ArrayList<String>(MAX_LIST_SIZE);
 		
-		this.oneStarList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.twoStarList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.threeStarList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.fourStarList = new ArrayList<String>(MAX_LIST_SIZE);
-		this.fiveStarList = new ArrayList<String>(MAX_LIST_SIZE);
+		oneStarList = new ArrayList<String>(MAX_LIST_SIZE);
+		twoStarList = new ArrayList<String>(MAX_LIST_SIZE);
+		threeStarList = new ArrayList<String>(MAX_LIST_SIZE);
+		fourStarList = new ArrayList<String>(MAX_LIST_SIZE);
+		fiveStarList = new ArrayList<String>(MAX_LIST_SIZE);
 				
 		setResizable(false);
 		setTitle("MainWindow");
@@ -125,6 +123,7 @@ public class MainWindow extends JFrame {
 				setContentPane(contentPane);
 			}
 		});
+		
 		btnNew.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnNew.setBounds(118, 209, 104, 38);
 		welcomePanel.add(btnNew);
@@ -192,22 +191,22 @@ public class MainWindow extends JFrame {
 		contentPane.add(listRating);
 		
 		JLabel lblGenre = new JLabel("Genre");
-		lblGenre.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblGenre.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblGenre.setHorizontalAlignment(SwingConstants.CENTER);
-		lblGenre.setBounds(93, 123, 64, 14);
+		lblGenre.setBounds(93, 135, 64, 37);
 		contentPane.add(lblGenre);
 		
 		JLabel lblTitle = new JLabel("Movie Title");
-		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitle.setBounds(202, 32, 135, 14);
+		lblTitle.setBounds(202, 32, 135, 23);
 		contentPane.add(lblTitle);
 		
 		JLabel lblRating = new JLabel("Star Rating");
-		lblRating.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblRating.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblRating.setHorizontalTextPosition(SwingConstants.CENTER);
 		lblRating.setHorizontalAlignment(SwingConstants.CENTER);
-		lblRating.setBounds(383, 123, 64, 14);
+		lblRating.setBounds(340, 135, 150, 33);
 		contentPane.add(lblRating);
 		
 		JButton btnEntryReset = new JButton("Reset");
@@ -220,6 +219,7 @@ public class MainWindow extends JFrame {
 				listRating.clearSelection();
 			}
 		});
+		
 		btnEntryReset.setToolTipText("Stop an in-progress movie addition and clear fields");
 		btnEntryReset.setBounds(225, 193, 89, 23);
 		contentPane.add(btnEntryReset);
@@ -291,12 +291,101 @@ public class MainWindow extends JFrame {
 		
 		//TODO: Displays the database
 		JMenu viewMenu = new JMenu("View");
+		
+		JMenuItem byTitle = new JMenuItem("By Title");
+		byTitle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO: display by title
+				
+			}
+		});
+		
+		JMenu byGenre = new JMenu("By Genre");
+		JMenu byRating = new JMenu("By Rating");
+		
+	
+		JMenuItem horrorMenuItem = new JMenuItem("Horror");
+		horrorMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(horrorList);
+				
+			}
+		});
+		
+		JMenuItem actionMenuItem = new JMenuItem("Action");
+		actionMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(actionList);
+				
+			}
+		});
+		
+		JMenuItem comedyMenuItem = new JMenuItem("Comedy");
+		comedyMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(comedyList);
+				
+			}
+		});
+		
+		JMenuItem documentaryMenuItem = new JMenuItem("Documentary");
+		documentaryMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(documentaryList);
+				
+			}
+		});
+		JMenuItem sciFiMenuItem = new JMenuItem("Sci-Fi");
+		sciFiMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(sciFiList);
+				
+			}
+		});
+		JMenuItem fantasyMenuItem = new JMenuItem("Fantasy");
+		fantasyMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(fantasyList);
+				
+			}
+		});
+		JMenuItem thrillerMenuItem = new JMenuItem("Thriller");
+		thrillerMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(thrillerList);
+				
+			}
+		});
+		JMenuItem dramaMenuItem = new JMenuItem("Drama");
+		dramaMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(dramaList);
+				
+			}
+		});
+		JMenuItem otherMenuItem = new JMenuItem("Other");
+		otherMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayByCategory(otherList);
+				
+			}
+		});
+		
+		//TODO: create addGenresToMenu and addRatingsToMenu method to add commonly-used MenuItems to Menus
+		byGenre.add(actionMenuItem);
+		byGenre.add(horrorMenuItem);
+		byGenre.add(comedyMenuItem);
+		byGenre.add(documentaryMenuItem);
+		byGenre.add(sciFiMenuItem);
+		byGenre.add(fantasyMenuItem);
+		byGenre.add(thrillerMenuItem);
+		byGenre.add(dramaMenuItem);
+		byGenre.add(otherMenuItem);
+		
+		viewMenu.add(byTitle);
+		viewMenu.add(byGenre);
 		//TODO: Searches the database
 		JMenu searchMenu = new JMenu("Search");
-		
-		JMenuItem databaseMenuItem = new JMenuItem("Database");
-		
-		viewMenu.add(databaseMenuItem);
 		
 		menuBar.setAlignmentX(LEFT_ALIGNMENT);
 		menuBar.add(fileMenu);
@@ -367,30 +456,10 @@ public class MainWindow extends JFrame {
 			}
 		});
 		
-		databaseMenuItem.addActionListener(new ActionListener() {
+		byTitle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-		        StringBuilder databaseContent = new StringBuilder();
-		        // Iterate through the titleList and fetch details from the HashMap
-		        for (String title : titleList) {
-		        	//Prevents duplicates by checking database for title
-		        	//Does not append to databaseContent if title is already present
-		        	if(!databaseContent.toString().contains(title)) {
-		        		Movie movie = movieHash.get(title);
-		        		databaseContent.append("Title: ").append(movie.getTitle()).append("\n");
-		        		databaseContent.append("Genre: ").append(movie.getGenre()).append("\n");
-		        		databaseContent.append("Rating: ").append(movie.getStarRating()).append("\n\n");
-		        	}
-		            
-		        }
-		        
-		        JTextArea textArea = new JTextArea(databaseContent.toString());
-		        textArea.setEditable(false);
-		        
-		        JScrollPane scrollPane = new JScrollPane(textArea);
-		        
-		        JOptionPane.showMessageDialog(contentPane, scrollPane, "Database Content", JOptionPane.PLAIN_MESSAGE);
-		    }
-	    
+				displayByCategory(titleList);
+		    }    
 		});
 		
 		
@@ -400,23 +469,23 @@ public class MainWindow extends JFrame {
 	
 	//Clears HashMap and all lists from current database
 	private void clearDB() {
-		this.movieHash.clear();
-		this.actionList.clear();
-		this.horrorList.clear();
-		this.comedyList.clear();
-		this.documentaryList.clear();
-		this.sciFiList.clear();
-		this.fantasyList.clear();
-		this.thrillerList.clear();
-		this.dramaList.clear();
-		this.otherList.clear();
-		this.titleList.clear();
+		movieHash.clear();
+		actionList.clear();
+		horrorList.clear();
+		comedyList.clear();
+		documentaryList.clear();
+		sciFiList.clear();
+		fantasyList.clear();
+		thrillerList.clear();
+		dramaList.clear();
+		otherList.clear();
+		titleList.clear();
 		
-		this.oneStarList.clear();
-		this.twoStarList.clear();
-		this.threeStarList.clear();
-		this.fourStarList.clear();
-		this.fiveStarList.clear();
+		oneStarList.clear();
+		twoStarList.clear();
+		threeStarList.clear();
+		fourStarList.clear();
+		fiveStarList.clear();
 	}
 	//Loads .txt file contents into HashMap
 	private void loadFile(boolean overwriteRequested, boolean successMsgRequested) {
@@ -520,52 +589,59 @@ public class MainWindow extends JFrame {
 		
 		switch(genre) {
 			case "Action":
-				actionList.add(title);
+				addIfNew(actionList, title);
 				break;
 			case "Horror":
-				horrorList.add(title);
+				addIfNew(horrorList, title);
 				break;
 			case "Comedy":
-				comedyList.add(title);
+				addIfNew(comedyList, title);
 				break;
 			case "Documentary":
-				documentaryList.add(title);
+				addIfNew(documentaryList, title);
 				break;
 			case "Sci-Fi":
-				sciFiList.add(title);
+				addIfNew(sciFiList, title);
 				break;
 			case "Fantasy":
-				fantasyList.add(title);
+				addIfNew(fantasyList, title);
 				break;
 			case "Thriller":
-				thrillerList.add(title);
+				addIfNew(thrillerList, title);
 				break;
 			case "Drama":
-				dramaList.add(title);
+				addIfNew(dramaList, title);
 				break;
 			case "Other":
-				otherList.add(title);
+				addIfNew(otherList, title);
 				break;
 			default:
-				otherList.add(title);				
+				addIfNew(otherList, title);				
 		}
 		
 		switch(rating) {
 		case 1:
-			oneStarList.add(title);
+			addIfNew(oneStarList,title);
 			break;
 		case 2:
-			twoStarList.add(title);
+			addIfNew(twoStarList, title);
 			break;
 		case 3: 
-			threeStarList.add(title);
+			addIfNew(threeStarList, title);
 			break;
 		case 4:
-			fourStarList.add(title);
+			addIfNew(fourStarList, title);
 			break;
 		case 5:
-			fiveStarList.add(title);
+			addIfNew(fiveStarList, title);
 		//TODO: verify input so default case isn't needed
+		}
+	}
+	
+	//Adds String to ArrayList if it is not already present
+	private void addIfNew(ArrayList<String> arrLst, String str) {
+		if(!arrLst.contains(str)) {
+			arrLst.add(str);
 		}
 	}
 	private void removeFromCategoryLists(Movie movie) {
@@ -644,29 +720,33 @@ public class MainWindow extends JFrame {
 		System.out.println("Five: " + fiveStarList.toString());
 	}
 	
-	//TODO: create method that displays database depending on the category list requested 
-	//(or the entire database, if needed)
 	private void displayByCategory(ArrayList<String> categoryList) {
-		 StringBuilder databaseContent = new StringBuilder();
+		//Sorts list in alphabetical order for display
+		categoryList.sort(null); 
+		
+		StringBuilder databaseContent = new StringBuilder();
 	        // Iterate through the categoryList and fetch details from the HashMap
 	        for (String title : categoryList) {
 	        	//Prevents duplicates by checking database for title
 	        	//Does not append to databaseContent if title is already present
 	        	if(!databaseContent.toString().contains(title)) {
 	        		Movie movie = movieHash.get(title);
-	        		databaseContent.append("Title: ").append(movie.getTitle()).append("\n");
-	        		databaseContent.append("Genre: ").append(movie.getGenre()).append("\n");
-	        		databaseContent.append("Rating: ").append(movie.getStarRating()).append("\n\n");
+	        		databaseContent.append(movie.toString() + "\n\n");
 	        	}
 	            
 	        }
 	        
-	        JTextArea textArea = new JTextArea(databaseContent.toString());
+	        JTextArea textArea = new JTextArea(11, 1);
+	        textArea.setFont(new Font("Tahoma", Font.BOLD, 14));
+	        textArea.setText(databaseContent.toString());
+	        //Moves scroll bar to top of text area
+	        textArea.setCaretPosition(0);
 	        textArea.setEditable(false);
 	        
 	        JScrollPane scrollPane = new JScrollPane(textArea);
 	        
 	        JOptionPane.showMessageDialog(contentPane, scrollPane, "Database Content", JOptionPane.PLAIN_MESSAGE);
+	        
 
 	}
 }
