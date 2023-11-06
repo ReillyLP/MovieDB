@@ -769,7 +769,7 @@ public class MainWindow extends JFrame {
 	            
 	        }
 	        
-	        JTextArea textArea = new JTextArea(11, 1);
+	        JTextArea textArea = new JTextArea();
 	        textArea.setFont(new Font("Tahoma", Font.BOLD, 14));
 	        textArea.setText(databaseContent.toString());
 	        //Moves scroll bar to top of text area
