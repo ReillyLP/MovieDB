@@ -84,15 +84,16 @@ public class MainWindow extends JFrame {
 		setTitle("MainWindow");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 558, 369);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(null);
 		
 		welcomePanel = new JPanel();
 		welcomePanel.setBorder(new EmptyBorder(0, 0, 0, 0));
 		welcomePanel.setBounds(0, 0, 542, 330);
 		setContentPane(welcomePanel);
 		welcomePanel.setLayout(null);
+
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(null);
 		
 		JLabel lblWelcome = new JLabel("Welcome!");
 		lblWelcome.setHorizontalAlignment(SwingConstants.CENTER);
@@ -232,7 +233,6 @@ public class MainWindow extends JFrame {
 		btnAddMovie.setBounds(210, 139, 120, 33);
 		
 		contentPane.add(btnAddMovie);
-		//TODO: Add movies to their respective category lists
 		btnAddMovie.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			//If title, genre, and rating have been selected, construct new Movie and add to HashMap
@@ -245,7 +245,7 @@ public class MainWindow extends JFrame {
 							//Adds new Movie to HashMap and titleList
 							//Uses index of star rating to determine int value
 							movieHash.put(movieTitle, new Movie(movieTitle, listGenre.getSelectedValue(), 
-								listRating.getSelectedIndex() + 1));
+								listRating.getSelectedIndex() + 1, getDescription()));
 							titleList.add(movieTitle);
 							 addToCategoryLists(movieHash.get(movieTitle));
 						}
@@ -253,8 +253,7 @@ public class MainWindow extends JFrame {
 							//Removes previous movie data from lists while creating new movie
 							removeFromCategoryLists(movieHash.get(movieTitle));
 							movieHash.put(movieTitle, new Movie(movieTitle, listGenre.getSelectedValue(), 
-									listRating.getSelectedIndex() + 1));
-							//TODO: prompt user asking if they would like to change current movie data
+									listRating.getSelectedIndex() + 1, getDescription()));
 							JOptionPane.showMessageDialog(contentPane, 
 								"Movie already exists in database!\n Movie updated with newest data");
 							Movie movie = movieHash.get(movieTitle);
@@ -274,6 +273,7 @@ public class MainWindow extends JFrame {
 				}
 				//FIXME: used for testing
 				printCategoryLists();
+				printDescriptions();
 				
 					}
 				});
@@ -288,8 +288,7 @@ public class MainWindow extends JFrame {
 		fileMenu.add(saveMenuItem);
 		fileMenu.add(loadMenuItem);
 		fileMenu.add(clearMenuItem);
-		
-		//TODO: Displays the database
+
 		JMenu viewMenu = new JMenu("View");
 		
 		JMenuItem byTitle = new JMenuItem("All Movies");
@@ -428,6 +427,8 @@ public class MainWindow extends JFrame {
 		//TODO: Searches the database
 		JMenu searchMenu = new JMenu("Search");
 		
+		
+		
 		menuBar.setAlignmentX(LEFT_ALIGNMENT);
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
@@ -458,6 +459,7 @@ public class MainWindow extends JFrame {
 				}
 				//FIXME: testing
 				printCategoryLists();
+				printDescriptions();
 			}
 
 		});
@@ -523,7 +525,6 @@ public class MainWindow extends JFrame {
 	//Loads .txt file contents into HashMap
 	private void loadFile(boolean overwriteRequested, boolean successMsgRequested) {
 		//Overwrites current database with contents in load file by first clearing database 
-		//TODO: Requires testing
 		if(overwriteRequested) {
 			this.clearDB();
 		}
@@ -545,11 +546,11 @@ public class MainWindow extends JFrame {
 				String movieData = fileReader.nextLine();
 				//Splits line into individual movie variables
 				//Tilde ( ~ ) used to split values to prevent splitting of titles containing commas
-				//Elements are as follows: [0]==title, [1]==genre, [2]==starRating
+				//Elements are as follows: [0]==title, [1]==genre, [2]==starRating [3]==description
 				String[] movieVars = movieData.split(" ~ ");
 				String title = movieVars[0];
 				//Adds each Movie to the HashMap
-				this.movieHash.put(title, new Movie(title, movieVars[1], Integer.parseInt(movieVars[2])));
+				this.movieHash.put(title, new Movie(title, movieVars[1], Integer.parseInt(movieVars[2]), movieVars[3]));
 				//Adds each Movie to the titleList after verifying that it is not already present
 				if(!this.titleList.contains(title)) {
 					this.titleList.add(title);
@@ -611,11 +612,6 @@ public class MainWindow extends JFrame {
 	}
 	
 	private void addToCategoryLists(Movie movie) {
-		/*
-		 * TODO: assign to lists for following genres:
-		 * "Action" "Horror" "Comedy" "Documentary" "Sci-Fi" "Fantasy" "Thriller" "Drama" "Other"
-		 * Add ratings
-		 */
 		String genre = movie.getGenre();
 		int rating = movie.getStarRating();
 		String title = movie.getTitle();
@@ -677,6 +673,20 @@ public class MainWindow extends JFrame {
 			arrLst.add(str);
 		}
 	}
+	
+	//Prompts user for custom description of movie
+	private String getDescription() {
+		int userChoice = JOptionPane.showConfirmDialog(contentPane, "Would you like to enter"
+				+ " a custom description of this movie?", "Custom Description",
+				JOptionPane.YES_NO_OPTION);
+		if (userChoice == JOptionPane.YES_OPTION) {	    
+			return JOptionPane.showInputDialog(contentPane, "Please enter a brief custom description: ");
+		}
+		else {
+			return "N/A";
+		}
+	}
+	
 	private void removeFromCategoryLists(Movie movie) {
 		String genre = movie.getGenre();
 		int rating = movie.getStarRating();
@@ -753,6 +763,28 @@ public class MainWindow extends JFrame {
 		System.out.println("Five: " + fiveStarList.toString());
 	}
 	
+	//FIXME: used for testing
+	private void printDescriptions() {
+		for(String title : titleList) {
+			System.out.println("\nTitle: " + title);
+			System.out.println("Description: " + movieHash.get(title).getDescription());
+		}
+	}
+	
+	private void displayTextArea(String displayText) {
+		JTextArea textArea = new JTextArea();
+        textArea.setRows(14);
+        textArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        textArea.setText(displayText);
+        //Moves scroll bar to top of text area
+        textArea.setCaretPosition(0);
+        textArea.setEditable(false);
+        
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        
+        JOptionPane.showMessageDialog(contentPane, scrollPane, "Display", JOptionPane.PLAIN_MESSAGE);
+	}
+	
 	private void displayByCategory(ArrayList<String> categoryList) {
 		//Sorts list in alphabetical order for display
 		categoryList.sort(null); 
@@ -769,18 +801,6 @@ public class MainWindow extends JFrame {
 	            
 	        }
 	        
-	        JTextArea textArea = new JTextArea();
-		textArea.setRows(15);
-	        textArea.setFont(new Font("Tahoma", Font.BOLD, 14));
-	        textArea.setText(databaseContent.toString());
-	        //Moves scroll bar to top of text area
-	        textArea.setCaretPosition(0);
-	        textArea.setEditable(false);
-	        
-	        JScrollPane scrollPane = new JScrollPane(textArea);
-	        
-	        JOptionPane.showMessageDialog(contentPane, scrollPane, "Database Content", JOptionPane.PLAIN_MESSAGE);
-	        
-
+	        displayTextArea(databaseContent.toString());
 	}
 }
