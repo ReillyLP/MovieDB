@@ -232,6 +232,7 @@ public class MainWindow extends JFrame {
 		btnAddMovie.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnAddMovie.setBounds(210, 139, 120, 33);
 		
+		//TODO: prompt the user to provide a description in a text area and add String to constructor
 		contentPane.add(btnAddMovie);
 		btnAddMovie.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -244,6 +245,7 @@ public class MainWindow extends JFrame {
 						if(!titleList.contains(movieTitle)) {
 							//Adds new Movie to HashMap and titleList
 							//Uses index of star rating to determine int value
+							//TODO: add user description prompt
 							movieHash.put(movieTitle, new Movie(movieTitle, listGenre.getSelectedValue(), 
 								listRating.getSelectedIndex() + 1, getDescription()));
 							titleList.add(movieTitle);
@@ -252,6 +254,7 @@ public class MainWindow extends JFrame {
 						else {
 							//Removes previous movie data from lists while creating new movie
 							removeFromCategoryLists(movieHash.get(movieTitle));
+							//TODO: add user description prompt
 							movieHash.put(movieTitle, new Movie(movieTitle, listGenre.getSelectedValue(), 
 									listRating.getSelectedIndex() + 1, getDescription()));
 							JOptionPane.showMessageDialog(contentPane, 
@@ -420,12 +423,31 @@ public class MainWindow extends JFrame {
 		byRating.add(fourStarMenuItem);
 		byRating.add(fiveStarMenuItem);
 		
+		//TODO: Searches the database
+		JMenu searchMenu = new JMenu("Search");
+		JMenuItem searchMenuItem = new JMenuItem("By Title");
+		searchMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String userInput;
+				
+				userInput = JOptionPane.showInputDialog(contentPane, "Please enter title of movie (search is case-sensitive): ");
+				
+				if(movieHash.containsKey(userInput)) {
+					displayTextArea(movieHash.get(userInput).toString());
+				}
+				else {
+					JOptionPane.showMessageDialog(contentPane, "Could not find movie in database! (If you believe this to be an error, "
+							+ "\nplease verify that the title has been entered correctly and try again)");
+				}
+			}
+		});
+		
+		searchMenu.add(searchMenuItem);
+		
 		viewMenu.add(byTitle);
 		viewMenu.add(byGenre);
 		viewMenu.add(byRating);
-		
-		//TODO: Searches the database
-		JMenu searchMenu = new JMenu("Search");
+	
 		
 		
 		
@@ -771,10 +793,11 @@ public class MainWindow extends JFrame {
 		}
 	}
 	
+	//TODO: add a custom movie cover image to the text area
 	private void displayTextArea(String displayText) {
 		JTextArea textArea = new JTextArea();
         textArea.setRows(14);
-        textArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        textArea.setFont(new Font("Tahoma", Font.BOLD, 14));
         textArea.setText(displayText);
         //Moves scroll bar to top of text area
         textArea.setCaretPosition(0);
