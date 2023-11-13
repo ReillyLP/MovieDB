@@ -1,5 +1,6 @@
 package main;
 
+//TODO: add movie image variable, and add image to toString
 public class Movie {
 	private String title, genre, description;
 	private int starRating;
@@ -45,7 +46,7 @@ public class Movie {
 
 	@Override
 	public String toString() {
-		return "Title: " + title + "\nGenre: " + genre + "\nRating: " + starRating;
+		return "Title: " + title + "\nGenre: " + genre + "\nRating: " + starRating + "\nDescription: " + description;
 	}
 	
 	
