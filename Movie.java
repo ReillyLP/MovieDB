@@ -1,13 +1,22 @@
 package main;
 
 public class Movie {
-	private String title, genre;
+	private String title, genre, description;
 	private int starRating;
 	
-	public Movie(String title, String genre, int starRating) {
+	public Movie(String title, String genre, int starRating, String description) {
 		this.title = title;
 		this.genre = genre;
 		this.starRating = starRating;
+		this.description = description;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getTitle() {
