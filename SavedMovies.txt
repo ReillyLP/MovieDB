@@ -1,13 +1,13 @@
-Annihilation ~ Sci-Fi ~ 4
-Midsommar ~ Horror ~ 4
-Freddy's Dead: The Final Nightmare ~ Horror ~ 2
-The Happening ~ Thriller ~ 1
-The Lord of the Rings: The Fellowship of the Ring ~ Fantasy ~ 4
-Conan the Barbarian ~ Fantasy ~ 3
-Amadeus ~ Drama ~ 5
-The Northman ~ Drama ~ 3
-RoboCop ~ Action ~ 5
-Tucker and Dale vs Evil ~ Comedy ~ 4
-Shaun of the Dead ~ Comedy ~ 5
-Woodstock ~ Documentary ~ 5
-Room 237 ~ Documentary ~ 1
+Annihilation ~ Sci-Fi ~ 4 ~ N/A
+Midsommar ~ Horror ~ 4 ~ N/A
+Freddy's Dead: The Final Nightmare ~ Horror ~ 2 ~ N/A
+The Happening ~ Thriller ~ 1 ~ N/A
+The Lord of the Rings: The Fellowship of the Ring ~ Fantasy ~ 4 ~ N/A
+Conan the Barbarian ~ Fantasy ~ 3 ~ N/A
+Amadeus ~ Drama ~ 5 ~ N/A
+The Northman ~ Drama ~ 3 ~ N/A
+RoboCop ~ Action ~ 5 ~ N/A
+Tucker and Dale vs Evil ~ Comedy ~ 4 ~ N/A
+Shaun of the Dead ~ Comedy ~ 5 ~ N/A
+Woodstock ~ Documentary ~ 5 ~ N/A
+Room 237 ~ Documentary ~ 1 ~ N/A
