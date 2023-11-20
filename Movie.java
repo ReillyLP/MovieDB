@@ -1,10 +1,12 @@
 package main;
 
-//TODO: add movie image variable, and add image to toString
+import java.awt.image.BufferedImage;
+
 public class Movie {
-	private String title, genre, description;
+	private String title, genre, description, coverPhotoPath;
 	private int starRating;
-	
+	private BufferedImage coverPhoto;
+
 	public Movie(String title, String genre, int starRating, String description) {
 		this.title = title;
 		this.genre = genre;
@@ -43,12 +45,25 @@ public class Movie {
 	public void setStarRating(int starRating) {
 		this.starRating = starRating;
 	}
+	
+	public BufferedImage getCoverPhoto() {
+		return coverPhoto;
+	}
+
+	public void setCoverPhoto(BufferedImage coverPhoto) {
+		this.coverPhoto = coverPhoto;
+	}
+
+	public String getCoverPhotoPath() {
+		return coverPhotoPath;
+	}
+
+	public void setCoverPhotoPath(String coverPhotoPath) {
+		this.coverPhotoPath = coverPhotoPath;
+	}
 
 	@Override
 	public String toString() {
-		return "Title: " + title + "\nGenre: " + genre + "\nRating: " + starRating + "\nDescription: " + description;
+		return "Title: " + title + "\nGenre: " + genre + "\nStar Rating: " + starRating + "\nDescription: " + description;
 	}
-	
-	
-	
 }
