@@ -5,17 +5,28 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.eclipse.swt.graphics.Image;
+
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.SwingConstants;
 import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
+import java.awt.image.*;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -93,6 +104,7 @@ public class MainWindow extends JFrame {
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		
 		contentPane.setLayout(null);
 		
 		JLabel lblWelcome = new JLabel("Welcome!");
@@ -245,23 +257,29 @@ public class MainWindow extends JFrame {
 						if(!titleList.contains(movieTitle)) {
 							//Adds new Movie to HashMap and titleList
 							//Uses index of star rating to determine int value
-							//TODO: add user description prompt
-							movieHash.put(movieTitle, new Movie(movieTitle, listGenre.getSelectedValue(), 
-								listRating.getSelectedIndex() + 1, getDescription()));
+							Movie movie = new Movie(movieTitle, listGenre.getSelectedValue(), 
+									listRating.getSelectedIndex() + 1, getDescription());
+							setCoverPhoto(movie);
+							movieHash.put(movieTitle, movie);
+							
 							titleList.add(movieTitle);
-							 addToCategoryLists(movieHash.get(movieTitle));
+							addToCategoryLists(movie);
+							displayMovieWithPhoto(movie);
 						}
 						else {
 							//Removes previous movie data from lists while creating new movie
 							removeFromCategoryLists(movieHash.get(movieTitle));
 							//TODO: add user description prompt
-							movieHash.put(movieTitle, new Movie(movieTitle, listGenre.getSelectedValue(), 
-									listRating.getSelectedIndex() + 1, getDescription()));
+							Movie movie = new Movie(movieTitle, listGenre.getSelectedValue(), 
+									listRating.getSelectedIndex() + 1, getDescription());
+							setCoverPhoto(movie);
+							movieHash.put(movieTitle, movie);
 							JOptionPane.showMessageDialog(contentPane, 
 								"Movie already exists in database!\n Movie updated with newest data");
-							Movie movie = movieHash.get(movieTitle);
 							addToCategoryLists(movie);
-						}
+							
+							//FIXME: testing
+							displayMovieWithPhoto(movie);						}
 						JOptionPane.showMessageDialog(contentPane, textAreaMovieTitle.getText() +
 								" Added Successfully!");
 					}
@@ -285,6 +303,7 @@ public class MainWindow extends JFrame {
 		menuBar.setBounds(0, 0, 542, 22);
 		
 		JMenu fileMenu = new JMenu("File");
+		fileMenu.setToolTipText("Basic read and write functions for the database");
 		JMenuItem saveMenuItem = new JMenuItem("Save");
 		JMenuItem loadMenuItem = new JMenuItem("Load");
 		JMenuItem clearMenuItem = new JMenuItem("Clear");
@@ -293,8 +312,9 @@ public class MainWindow extends JFrame {
 		fileMenu.add(clearMenuItem);
 
 		JMenu viewMenu = new JMenu("View");
+		viewMenu.setToolTipText("Text-only display of database contents (if you would like to view a cover photo, use the Search menu)");
 		
-		JMenuItem byTitle = new JMenuItem("All Movies");
+		JMenuItem byTitle = new JMenuItem("All Titles");
 		byTitle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				 displayByCategory(titleList);
@@ -416,15 +436,14 @@ public class MainWindow extends JFrame {
 		byGenre.add(dramaMenuItem);
 		byGenre.add(otherMenuItem);
 		
-		
 		byRating.add(oneStarMenuItem);
 		byRating.add(twoStarMenuItem);
 		byRating.add(threeStarMenuItem);
 		byRating.add(fourStarMenuItem);
 		byRating.add(fiveStarMenuItem);
 		
-		//TODO: Searches the database
 		JMenu searchMenu = new JMenu("Search");
+		searchMenu.setToolTipText("Finds a movie and displays its categories. Displays a cover photo if one has been added." );
 		JMenuItem searchMenuItem = new JMenuItem("By Title");
 		searchMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -433,7 +452,16 @@ public class MainWindow extends JFrame {
 				userInput = JOptionPane.showInputDialog(contentPane, "Please enter title of movie (search is case-sensitive): ");
 				
 				if(movieHash.containsKey(userInput)) {
-					displayTextArea(movieHash.get(userInput).toString());
+					Movie movie = movieHash.get(userInput);
+					//If movie has a cover photo, displays categories and photo
+					if(movie.getCoverPhoto() != null) {
+						displayMovieWithPhoto(movie);
+					}
+					else {
+						//Displays categories of movie without cover photo
+						displayMovieText(movie);
+					}
+					
 				}
 				else {
 					JOptionPane.showMessageDialog(contentPane, "Could not find movie in database! (If you believe this to be an error, "
@@ -448,9 +476,6 @@ public class MainWindow extends JFrame {
 		viewMenu.add(byGenre);
 		viewMenu.add(byRating);
 	
-		
-		
-		
 		menuBar.setAlignmentX(LEFT_ALIGNMENT);
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
@@ -568,11 +593,24 @@ public class MainWindow extends JFrame {
 				String movieData = fileReader.nextLine();
 				//Splits line into individual movie variables
 				//Tilde ( ~ ) used to split values to prevent splitting of titles containing commas
-				//Elements are as follows: [0]==title, [1]==genre, [2]==starRating [3]==description
+				//Elements are as follows: [0]==title, [1]==genre, [2]==starRating [3]==description [4]==coverPhotoPath
 				String[] movieVars = movieData.split(" ~ ");
 				String title = movieVars[0];
+				Movie movie = new Movie(title, movieVars[1], Integer.parseInt(movieVars[2]), movieVars[3]);
+				String photoPath = movieVars[4];
+				if(photoPath.compareTo("null") != 0) {
+					try {
+						movie.setCoverPhotoPath(photoPath);
+						BufferedImage bi = ImageIO.read(new File(movie.getCoverPhotoPath()));
+						movie.setCoverPhoto(bi);
+					} catch (Exception e) {
+						//FIXME: used for testing
+						System.out.println("ERROR: Failed to create cover photo from file");
+					}
+				}
+				
 				//Adds each Movie to the HashMap
-				this.movieHash.put(title, new Movie(title, movieVars[1], Integer.parseInt(movieVars[2]), movieVars[3]));
+				this.movieHash.put(title, movie);
 				//Adds each Movie to the titleList after verifying that it is not already present
 				if(!this.titleList.contains(title)) {
 					this.titleList.add(title);
@@ -615,7 +653,7 @@ public class MainWindow extends JFrame {
 			for(String title : titleList) {
 				tempMovie = movieHash.get(title);
 				saveToTxt.println(tempMovie.getTitle() + " ~ " + tempMovie.getGenre() + " ~ " 
-					+ tempMovie.getStarRating());
+					+ tempMovie.getStarRating() + " ~ " + tempMovie.getDescription() + " ~ " + tempMovie.getCoverPhotoPath());
 			}
 			saveToTxt.close();
 			if(overwriteRequested) {
@@ -790,10 +828,25 @@ public class MainWindow extends JFrame {
 		for(String title : titleList) {
 			System.out.println("\nTitle: " + title);
 			System.out.println("Description: " + movieHash.get(title).getDescription());
+			System.out.println("Cover Photo: " + movieHash.get(title).getCoverPhoto());
 		}
 	}
 	
-	//TODO: add a custom movie cover image to the text area
+	private void displayMovieWithPhoto(Movie movie) {
+		if(movie.getCoverPhoto() != null) {
+			JPanel panel = new JPanel();
+			ImageIcon coverPhoto = new ImageIcon(movie.getCoverPhoto().getScaledInstance(360, 640, java.awt.Image.SCALE_SMOOTH));
+			JLabel label = new JLabel();
+			label.setIcon(coverPhoto);
+			panel.add(label);
+			JTextArea textArea = new JTextArea(movie.toString());
+			textArea.setFont(new Font("Tahoma", Font.BOLD, 14));
+			panel.add(textArea);
+			
+			JOptionPane.showMessageDialog(contentPane, panel, "Movie", JOptionPane.PLAIN_MESSAGE);
+		}
+	}
+	
 	private void displayTextArea(String displayText) {
 		JTextArea textArea = new JTextArea();
         textArea.setRows(14);
@@ -808,6 +861,43 @@ public class MainWindow extends JFrame {
         JOptionPane.showMessageDialog(contentPane, scrollPane, "Display", JOptionPane.PLAIN_MESSAGE);
 	}
 	
+	//Creates a small text area to display a single movie
+	private void displayMovieText(Movie movie) {
+		JTextArea textArea = new JTextArea();
+        textArea.setRows(5);
+        textArea.setFont(new Font("Tahoma", Font.BOLD, 14));
+        textArea.setText(movie.toString());
+        //Moves scroll bar to top of text area
+        textArea.setCaretPosition(0);
+        textArea.setEditable(false);
+        
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        
+        JOptionPane.showMessageDialog(contentPane, scrollPane, "Display", JOptionPane.PLAIN_MESSAGE);
+	}
+	
+	private void setCoverPhoto(Movie movie) {
+		FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("Images", "jpg", "jpeg", "png");
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.addChoosableFileFilter(imageFilter);
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		
+		int userChoice = JOptionPane.showConfirmDialog(contentPane, "Would you like to add a cover photo?",
+				"Cover Photo", JOptionPane.YES_NO_OPTION);
+		if (userChoice == JOptionPane.YES_OPTION) {
+			if(fileChooser.showOpenDialog(contentPane) == JFileChooser.APPROVE_OPTION) {
+				try {
+					BufferedImage coverPhoto = ImageIO.read(fileChooser.getSelectedFile());
+					movie.setCoverPhoto(coverPhoto);
+					movie.setCoverPhotoPath(fileChooser.getSelectedFile().getAbsolutePath());
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			}
+		    JOptionPane.showMessageDialog(contentPane, "Cover photo added!");
+		}
+	}
+		
 	private void displayByCategory(ArrayList<String> categoryList) {
 		//Sorts list in alphabetical order for display
 		categoryList.sort(null); 
