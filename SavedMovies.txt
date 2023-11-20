@@ -1,14 +1,14 @@
-Annihilation ~ Sci-Fi ~ 4 ~ "Test Description for Annihilation"
-Midsommar ~ Horror ~ 4 ~ "Test Description for Midsommar"
-Freddy's Dead: The Final Nightmare ~ Horror ~ 2 ~ "Test Description for Freddy's Dead"
-The Happening ~ Thriller ~ 1 ~ "Test Description for The Happening"
-The Lord of the Rings: The Fellowship of the Ring ~ Fantasy ~ 4 ~ "Test Description for LOTR"
-Conan the Barbarian ~ Fantasy ~ 3 ~ "Test Description for Conan"
-Amadeus ~ Drama ~ 5 ~ "Test Description for Amadeus"
-The Northman ~ Drama ~ 3 ~ "Test Description for The Northman"
-RoboCop ~ Action ~ 5 ~ "Test Description for RoboCop"
-Tucker and Dale vs Evil ~ Comedy ~ 4 ~ "Test Description for T&D"
-Shaun of the Dead ~ Comedy ~ 5 ~ "Test Description for Shaun of the Dead"
-Woodstock ~ Documentary ~ 5 ~ "Test Description for Woodstock"
-Room 237 ~ Documentary ~ 1 ~ "Test Description for Room 237"
-A Movie with No Description ~ Other ~ 5 ~ "N/A"
+Annihilation ~ Sci-Fi ~ 4 ~ Test Description for Annihilation
+Midsommar ~ Horror ~ 4 ~ Test Description for Midsommar
+Freddy's Dead: The Final Nightmare ~ Horror ~ 2 ~ Test Description for Freddy's Dead
+The Happening ~ Thriller ~ 1 ~ Test Description for The Happening
+The Lord of the Rings: The Fellowship of the Ring ~ Fantasy ~ 4 ~ Test Description for LOTR
+Conan the Barbarian ~ Fantasy ~ 3 ~ Test Description for Conan
+Amadeus ~ Drama ~ 5 ~ Test Description for Amadeus
+The Northman ~ Drama ~ 3 ~ Test Description for The Northman
+RoboCop ~ Action ~ 5 ~ Test Description for RoboCop
+Tucker and Dale vs Evil ~ Comedy ~ 4 ~ Test Description for T&D
+Shaun of the Dead ~ Comedy ~ 5 ~ Test Description for Shaun of the Dead
+Woodstock ~ Documentary ~ 5 ~ Test Description for Woodstock
+Room 237 ~ Documentary ~ 1 ~ Test Description for Room 237
+A Movie with No Description ~ Other ~ 5 ~ N/A
