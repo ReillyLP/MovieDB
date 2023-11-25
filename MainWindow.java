@@ -7,11 +7,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.eclipse.swt.graphics.Image;
-
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -24,9 +21,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
-import java.awt.image.*;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -42,7 +37,7 @@ import javax.swing.JMenuItem;
 public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane, welcomePanel;
+	private JPanel contentPane, welcomePanel, entryPanel;
 	final int MAX_LIST_SIZE = 50;
 	//HashMap used to store Movie objects using their titles as keys
 	//Initial max. capacity of 50 Movies
@@ -96,16 +91,31 @@ public class MainWindow extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 558, 369);
 		
+		//Main container for the application
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(null);
+		setContentPane(contentPane);
+		
+		//First panel user sees. Asks if new or previous database should be used.
 		welcomePanel = new JPanel();
 		welcomePanel.setBorder(new EmptyBorder(0, 0, 0, 0));
 		welcomePanel.setBounds(0, 0, 542, 330);
-		setContentPane(welcomePanel);
 		welcomePanel.setLayout(null);
-
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		
-		contentPane.setLayout(null);
+		contentPane.add(welcomePanel);
+		welcomePanel.setEnabled(true);
+		welcomePanel.setVisible(true);
+		
+		
+		entryPanel = new JPanel();
+		entryPanel.setVisible(false);
+		entryPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+		entryPanel.setBounds(0, 0, 542, 330);
+		entryPanel.setLayout(null);
+		entryPanel.setEnabled(false);
+		
+		contentPane.add(entryPanel);
 		
 		JLabel lblWelcome = new JLabel("Welcome!");
 		lblWelcome.setHorizontalAlignment(SwingConstants.CENTER);
@@ -133,7 +143,8 @@ public class MainWindow extends JFrame {
 				//Removes ability to see or interact with welcome panel
 				welcomePanel.setVisible(false);
 				welcomePanel.setEnabled(false);
-				setContentPane(contentPane);
+				entryPanel.setVisible(true);
+				entryPanel.setEnabled(true);
 			}
 		});
 		
@@ -152,7 +163,8 @@ public class MainWindow extends JFrame {
 				//Removes ability to see or interact with welcome panel
 				welcomePanel.setVisible(false);
 				welcomePanel.setEnabled(false);
-				setContentPane(contentPane);
+				entryPanel.setVisible(true);
+				entryPanel.setEnabled(true);
 				loadFile(false, true);
 			}
 		});
@@ -164,7 +176,7 @@ public class MainWindow extends JFrame {
 		textAreaMovieTitle.setLineWrap(true);
 		textAreaMovieTitle.setToolTipText("Type movie title here");
 		textAreaMovieTitle.setBounds(159, 57, 221, 71);
-		contentPane.add(textAreaMovieTitle);
+		entryPanel.add(textAreaMovieTitle);
 
 		//Creates a list model of genres to be displayed to user via JList
 		DefaultListModel<String> listModGenre = new DefaultListModel<String>();
@@ -186,7 +198,7 @@ public class MainWindow extends JFrame {
 		listGenre.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		listGenre.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listGenre.setFont(new Font("Tahoma", Font.BOLD, 10));
-		contentPane.add(listGenre);
+		entryPanel.add(listGenre);
 		
 		//Creates a list model of star ratings to be displayed to user via JList
 		DefaultListModel<String> listModRating = new DefaultListModel<String>();
@@ -201,26 +213,26 @@ public class MainWindow extends JFrame {
 		listRating.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		listRating.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listRating.setFont(new Font("Tahoma", Font.BOLD, 16));
-		contentPane.add(listRating);
+		entryPanel.add(listRating);
 		
 		JLabel lblGenre = new JLabel("Genre");
 		lblGenre.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblGenre.setHorizontalAlignment(SwingConstants.CENTER);
 		lblGenre.setBounds(93, 135, 64, 37);
-		contentPane.add(lblGenre);
+		entryPanel.add(lblGenre);
 		
 		JLabel lblTitle = new JLabel("Movie Title");
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTitle.setBounds(202, 32, 135, 23);
-		contentPane.add(lblTitle);
+		entryPanel.add(lblTitle);
 		
 		JLabel lblRating = new JLabel("Star Rating");
 		lblRating.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblRating.setHorizontalTextPosition(SwingConstants.CENTER);
 		lblRating.setHorizontalAlignment(SwingConstants.CENTER);
 		lblRating.setBounds(340, 135, 150, 33);
-		contentPane.add(lblRating);
+		entryPanel.add(lblRating);
 		
 		JButton btnEntryReset = new JButton("Reset");
 		btnEntryReset.setFocusPainted(false);
@@ -235,7 +247,7 @@ public class MainWindow extends JFrame {
 		
 		btnEntryReset.setToolTipText("Stop an in-progress movie addition and clear fields");
 		btnEntryReset.setBounds(225, 193, 89, 23);
-		contentPane.add(btnEntryReset);
+		entryPanel.add(btnEntryReset);
 
 		JButton btnAddMovie = new JButton("Add Movie");
 		btnAddMovie.setToolTipText("Click after selecting all required movie categoriese to add movie to database");
@@ -245,7 +257,7 @@ public class MainWindow extends JFrame {
 		btnAddMovie.setBounds(210, 139, 120, 33);
 		
 		//TODO: prompt the user to provide a description in a text area and add String to constructor
-		contentPane.add(btnAddMovie);
+		entryPanel.add(btnAddMovie);
 		btnAddMovie.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			//If title, genre, and rating have been selected, construct new Movie and add to HashMap
@@ -425,7 +437,6 @@ public class MainWindow extends JFrame {
 			}
 		});
 		
-		//TODO: create addGenresToMenu and addRatingsToMenu method to add commonly-used MenuItems to Menus
 		byGenre.add(actionMenuItem);
 		byGenre.add(horrorMenuItem);
 		byGenre.add(comedyMenuItem);
@@ -480,7 +491,8 @@ public class MainWindow extends JFrame {
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
 		menuBar.add(searchMenu);
-		contentPane.add(menuBar);
+		
+		entryPanel.add(menuBar);
 		
 		loadMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -512,28 +524,27 @@ public class MainWindow extends JFrame {
 		});
 		
 		saveMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					File savedMovies = new File("SavedMovies.txt");
+			public void actionPerformed(ActionEvent e) {
+				File savedMovies = new File("SavedMovies.txt");
 
-					if(savedMovies.exists()) {
-						String[] saveOptions = {"Overwrite", "Add", "Cancel"};
-						int userChoice = JOptionPane.showOptionDialog(contentPane, "A saved database already exists!\n"
-								+ "Would you like to overwrite the previous database file\n or add your current movies to the file?", 
-								"Save to File", 0, 3, null, saveOptions, saveOptions[0]);
-						//Overwrites file
-						if (userChoice == 0) {
-							saveToFile(savedMovies, true);
-						}
-						//Adds database to file
-						else if(userChoice == 1) {
-							//Loads file to database, then saves combined database back to file
-							loadFile(false, false);
-							saveToFile(savedMovies, false);
-							
-						}
+				if(savedMovies.exists()) {
+					String[] saveOptions = {"Overwrite", "Add", "Cancel"};
+					int userChoice = JOptionPane.showOptionDialog(contentPane, "A saved database already exists!\n"
+							+ "Would you like to overwrite the previous database file\n or add your current movies to the file?", 
+							"Save to File", 0, 3, null, saveOptions, saveOptions[0]);
+					//Overwrites file
+					if (userChoice == 0) {
+						saveToFile(savedMovies, true);
+					}
+					//Adds database to file
+					else if(userChoice == 1) {
+						//Loads file to database, then saves combined database back to file
+						loadFile(false, false);
+						saveToFile(savedMovies, false);	
 					}
 				}
-			});
+			}
+		});
 		
 		clearMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -570,7 +581,7 @@ public class MainWindow extends JFrame {
 		fiveStarList.clear();
 	}
 	//Loads .txt file contents into HashMap
-	private void loadFile(boolean overwriteRequested, boolean successMsgRequested) {
+	private void loadFile(boolean overwriteRequested, boolean successMsgRequested) {		
 		//Overwrites current database with contents in load file by first clearing database 
 		if(overwriteRequested) {
 			this.clearDB();
@@ -589,6 +600,9 @@ public class MainWindow extends JFrame {
 			 * Enforce max. amount of char's in title?
 			 */
 			
+			//Used to prevent multiple error messages from appearing
+			boolean hasPrevDisplayedError = false;
+			
 			while(fileReader.hasNextLine()) {
 				String movieData = fileReader.nextLine();
 				//Splits line into individual movie variables
@@ -604,8 +618,14 @@ public class MainWindow extends JFrame {
 						BufferedImage bi = ImageIO.read(new File(movie.getCoverPhotoPath()));
 						movie.setCoverPhoto(bi);
 					} catch (Exception e) {
-						//FIXME: used for testing
-						System.out.println("ERROR: Failed to create cover photo from file");
+						//Only displays error message if it hasn't been displayed before
+						//Prevents excessive message pop-ups
+						if(!hasPrevDisplayedError) {
+							JOptionPane.showMessageDialog(this, "ERROR: Cannot locate previous cover photo(s). "
+									+ "Please verify that photo location has not changed since last load." );
+							hasPrevDisplayedError = true;
+						}
+						
 					}
 				}
 				
@@ -828,13 +848,14 @@ public class MainWindow extends JFrame {
 		for(String title : titleList) {
 			System.out.println("\nTitle: " + title);
 			System.out.println("Description: " + movieHash.get(title).getDescription());
-			System.out.println("Cover Photo: " + movieHash.get(title).getCoverPhoto());
+			System.out.println("Cover Photo: " + movieHash.get(title).getCoverPhotoPath());
 		}
 	}
 	
 	private void displayMovieWithPhoto(Movie movie) {
 		if(movie.getCoverPhoto() != null) {
 			JPanel panel = new JPanel();
+			//Cover photo scaled to a 9:16 size
 			ImageIcon coverPhoto = new ImageIcon(movie.getCoverPhoto().getScaledInstance(360, 640, java.awt.Image.SCALE_SMOOTH));
 			JLabel label = new JLabel();
 			label.setIcon(coverPhoto);
