@@ -11,8 +11,10 @@ import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.SwingConstants;
+
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -46,7 +48,8 @@ public class MainWindow extends JFrame {
 	//Each list contains Movie titles to be used as keys to access HashMap
 	private ArrayList<String> actionList, horrorList, comedyList, documentaryList, sciFiList;
 	private ArrayList<String> fantasyList, thrillerList, dramaList, otherList, titleList;
-	private ArrayList<String> oneStarList, twoStarList, threeStarList, fourStarList, fiveStarList;
+	private ArrayList<String> oneStarList, twoStarList, threeStarList, fourStarList, fiveStarList; 
+	
 	/**
 	 * Launch the application.
 	 */
@@ -145,6 +148,12 @@ public class MainWindow extends JFrame {
 				welcomePanel.setEnabled(false);
 				entryPanel.setVisible(true);
 				entryPanel.setEnabled(true);
+				int userChoice = JOptionPane.showConfirmDialog(contentPane, "Would you like to choose a custom background color?"
+						+ "\n(background can also be changed at a later time using the \"Window\" menu)",
+						"Custom Color", JOptionPane.YES_NO_OPTION);
+				if (userChoice == JOptionPane.YES_OPTION) {
+					entryPanel.setBackground(JColorChooser.showDialog(contentPane, "Choose Color", entryPanel.getBackground()));
+				}
 			}
 		});
 		
@@ -481,16 +490,31 @@ public class MainWindow extends JFrame {
 			}
 		});
 		
+		JMenu windowMenu = new JMenu("Window");
+		windowMenu.setToolTipText("Customize application windows");
+		
+		JMenuItem appearanceMenuItem = new JMenuItem("Appearance");
+		appearanceMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				entryPanel.setBackground(JColorChooser.showDialog(contentPane, "Choose Color", entryPanel.getBackground()));
+			}	
+		});
+		
+		
+		
 		searchMenu.add(searchMenuItem);
 		
 		viewMenu.add(byTitle);
 		viewMenu.add(byGenre);
 		viewMenu.add(byRating);
+		
+		windowMenu.add(appearanceMenuItem);
 	
 		menuBar.setAlignmentX(LEFT_ALIGNMENT);
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
 		menuBar.add(searchMenu);
+		menuBar.add(windowMenu);
 		
 		entryPanel.add(menuBar);
 		
@@ -855,6 +879,7 @@ public class MainWindow extends JFrame {
 	private void displayMovieWithPhoto(Movie movie) {
 		if(movie.getCoverPhoto() != null) {
 			JPanel panel = new JPanel();
+			panel.setBackground(entryPanel.getBackground());
 			//Cover photo scaled to a 9:16 size
 			ImageIcon coverPhoto = new ImageIcon(movie.getCoverPhoto().getScaledInstance(360, 640, java.awt.Image.SCALE_SMOOTH));
 			JLabel label = new JLabel();
