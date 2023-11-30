@@ -265,7 +265,6 @@ public class MainWindow extends JFrame {
 		btnAddMovie.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnAddMovie.setBounds(210, 139, 120, 33);
 		
-		//TODO: prompt the user to provide a description in a text area and add String to constructor
 		entryPanel.add(btnAddMovie);
 		btnAddMovie.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -290,7 +289,6 @@ public class MainWindow extends JFrame {
 						else {
 							//Removes previous movie data from lists while creating new movie
 							removeFromCategoryLists(movieHash.get(movieTitle));
-							//TODO: add user description prompt
 							Movie movie = new Movie(movieTitle, listGenre.getSelectedValue(), 
 									listRating.getSelectedIndex() + 1, getDescription());
 							setCoverPhoto(movie);
@@ -298,25 +296,20 @@ public class MainWindow extends JFrame {
 							JOptionPane.showMessageDialog(contentPane, 
 								"Movie already exists in database!\n Movie updated with newest data");
 							addToCategoryLists(movie);
-							
-							//FIXME: testing
+							//Displays photo so user can verify that movie info is correct
 							displayMovieWithPhoto(movie);						}
-						JOptionPane.showMessageDialog(contentPane, textAreaMovieTitle.getText() +
+							JOptionPane.showMessageDialog(contentPane, textAreaMovieTitle.getText() +
 								" Added Successfully!");
 					}
 					else {
 						JOptionPane.showMessageDialog(contentPane, 
-								"ERROR: Cannot add movie:\n Database has reached maximum capacity"); 
+								"ERROR: Cannot add movie!\n Database has reached maximum capacity"); 
 					}		
 				}
 				else {
 					JOptionPane.showMessageDialog(contentPane, 
 							"Insufficient Data: Please Provide All Categories");
 				}
-				//FIXME: used for testing
-				printCategoryLists();
-				printDescriptions();
-				
 					}
 				});
 	
@@ -471,6 +464,12 @@ public class MainWindow extends JFrame {
 				
 				userInput = JOptionPane.showInputDialog(contentPane, "Please enter title of movie (search is case-sensitive): ");
 				
+				//Ends process if no movie title was given
+				//userInput is null if Cancel button was clicked, and blank if OK button was clicked with blank field
+				if(userInput == null || userInput.isBlank()) {
+					return;
+				}
+ 
 				if(movieHash.containsKey(userInput)) {
 					Movie movie = movieHash.get(userInput);
 					//If movie has a cover photo, displays categories and photo
@@ -540,9 +539,6 @@ public class MainWindow extends JFrame {
 				else {
 					loadFile(false, true);
 				}
-				//FIXME: testing
-				printCategoryLists();
-				printDescriptions();
 			}
 
 		});
@@ -552,6 +548,12 @@ public class MainWindow extends JFrame {
 				File savedMovies = new File("SavedMovies.txt");
 
 				if(savedMovies.exists()) {
+					//If destination file is empty, overwrites file (prevents "File is empty" message from loadFile() in below "Overwrite" option)
+					if(savedMovies.length() == 0) {
+						saveToFile(savedMovies, true);
+						return;
+					}
+					
 					String[] saveOptions = {"Overwrite", "Add", "Cancel"};
 					int userChoice = JOptionPane.showOptionDialog(contentPane, "A saved database already exists!\n"
 							+ "Would you like to overwrite the previous database file\n or add your current movies to the file?", 
@@ -572,7 +574,8 @@ public class MainWindow extends JFrame {
 		
 		clearMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int userChoice = JOptionPane.showConfirmDialog(contentPane, "Are you sure?\n This will delete all database contents",
+				int userChoice = JOptionPane.showConfirmDialog(contentPane, "Are you sure?\n This will delete all current database content."
+						+ "\n(Only deletes application database. Does not affect previously saved file.)",
 						"Clear Database", JOptionPane.YES_NO_OPTION);
 				if (userChoice == JOptionPane.YES_OPTION) {
 					clearDB();
@@ -610,31 +613,67 @@ public class MainWindow extends JFrame {
 		if(overwriteRequested) {
 			this.clearDB();
 		}
+
+		else if(movieHash.size() >= MAX_LIST_SIZE) {
+			JOptionPane.showMessageDialog(contentPane, "ERROR: Database is currently at maximum capacity.");
+			return;
+		}
 		
 		File savedMovies = new File("SavedMovies.txt");
 		Scanner fileReader;
+		boolean hasFormatError = false;
+		
 		try {
 			fileReader = new Scanner(savedMovies);
+			//Ends load process if file is blank
+			if(!fileReader.hasNextLine()) {
+				fileReader.close();
+				//If attempting to load file to empty application database, warns user that file is empty
+				if(movieHash.isEmpty()) {
+					JOptionPane.showMessageDialog(contentPane, "ERROR: No data found in file!");
+					hasFormatError = true;
+					return;
+				}
+			}
 			
-			/*
-			 * TODO: 
-			 * Determine if user's saved file is in valid format.
-			 * Try searching Genre text box for valid genre Strings before adding to HashMap
-			 * Verify that rating is between 1-5.
-			 * Enforce max. amount of char's in title?
-			 */
-			
-			//Used to prevent multiple error messages from appearing
-			boolean hasPrevDisplayedError = false;
+			//Used when photo could not be found
+			boolean hasPhotoError = false;
 			
 			while(fileReader.hasNextLine()) {
+				if(movieHash.size() == MAX_LIST_SIZE) {
+					JOptionPane.showMessageDialog(contentPane, "ERROR: Database has reached maximum capacity!"
+							+ "\nUnable to load remaining movies.");
+					fileReader.close();
+					return;
+				}
 				String movieData = fileReader.nextLine();
+
+				
 				//Splits line into individual movie variables
 				//Tilde ( ~ ) used to split values to prevent splitting of titles containing commas
 				//Elements are as follows: [0]==title, [1]==genre, [2]==starRating [3]==description [4]==coverPhotoPath
 				String[] movieVars = movieData.split(" ~ ");
+				
+				//Checks whether valid amount of variables has been given
+				if(movieVars.length != 5) {
+					fileReader.close();
+					hasFormatError = true;
+					JOptionPane.showMessageDialog(contentPane, "ERROR: One or more movies have an invalid number of variables.");
+					break;
+				}
+				
+				int starRating = Integer.parseInt(movieVars[2]);
+				//Ends load process if starRating is not valid (between 1-5)
+				if(starRating > 5 || starRating < 1) {
+					JOptionPane.showMessageDialog(contentPane, "ERROR: Unable to load file. "
+							+ "Star Rating for one or more movies is outside of valid range.");
+					hasFormatError = true;
+					fileReader.close();
+					break;
+				}
+				
 				String title = movieVars[0];
-				Movie movie = new Movie(title, movieVars[1], Integer.parseInt(movieVars[2]), movieVars[3]);
+				Movie movie = new Movie(title, movieVars[1], starRating, movieVars[3]);
 				String photoPath = movieVars[4];
 				if(photoPath.compareTo("null") != 0) {
 					try {
@@ -644,10 +683,10 @@ public class MainWindow extends JFrame {
 					} catch (Exception e) {
 						//Only displays error message if it hasn't been displayed before
 						//Prevents excessive message pop-ups
-						if(!hasPrevDisplayedError) {
-							JOptionPane.showMessageDialog(this, "ERROR: Cannot locate previous cover photo(s). "
-									+ "Please verify that photo location has not changed since last load." );
-							hasPrevDisplayedError = true;
+						if(!hasPhotoError) {
+							JOptionPane.showMessageDialog(this, "ERROR: Cannot locate one or more previous cover photos! "
+									+ "\nPlease verify that photo location has not changed since database file was created.");
+							hasPhotoError = true;
 						}
 						
 					}
@@ -665,13 +704,29 @@ public class MainWindow extends JFrame {
 				 * with the user's newest input.
 				 */
 			}
+			
+			//If invalid format was given, load process is ended, and error message is displayed
+			if(hasFormatError) {
+				fileReader.close();
+				JOptionPane.showMessageDialog(contentPane, "File load failed!"
+						+ "\nPlease verify that your file was either generated by this program"
+						+ "\n or written in the format used by this program.");
+				return;
+			}
+			
+			//End of file read
 			if(overwriteRequested) {
-				JOptionPane.showMessageDialog(this, 
-						"Database Overwrite Successful!");
+				JOptionPane.showMessageDialog(this, "Database Overwrite Successful!");
 			}
 			else if(successMsgRequested) {
-				JOptionPane.showMessageDialog(this, 
-						"File Load Successful!");
+				if(hasPhotoError) {
+					JOptionPane.showMessageDialog(this, 
+							"File load complete! \nAny previous photos moved/deleted since file creation have been omitted.");
+				}
+				else {
+					JOptionPane.showMessageDialog(this, "File Load Successful!");	
+				}
+				
 			}
 			//After file has successfully loaded, update lists with new movies
 			for(String title : titleList) {
@@ -767,7 +822,6 @@ public class MainWindow extends JFrame {
 			break;
 		case 5:
 			addIfNew(fiveStarList, title);
-		//TODO: verify input so default case isn't needed
 		}
 	}
 	
@@ -843,36 +897,6 @@ public class MainWindow extends JFrame {
 			break;
 		case 5:
 			fiveStarList.remove(title);
-		//TODO: verify input so default case isn't needed
-		}
-	}
-	
-	//FIXME: used for testing
-	private void printCategoryLists() {
-		System.out.println("Title: " + titleList.toString());		
-		System.out.println("Action: " + actionList.toString());
-		System.out.println("Horror: " + horrorList.toString());
-		System.out.println("Comedy: " + comedyList.toString());
-		System.out.println("Documentary: " + documentaryList.toString());
-		System.out.println("Sci-Fi: " + sciFiList.toString());
-		System.out.println("Fantasy: " + fantasyList.toString());
-		System.out.println("Thriller: " + thrillerList.toString());
-		System.out.println("Drama: " + dramaList.toString());
-		System.out.println("Other: " + otherList.toString());
-		
-		System.out.println("One: " + oneStarList.toString());
-		System.out.println("Two: " + twoStarList.toString());
-		System.out.println("Three: " + threeStarList.toString());
-		System.out.println("Four: " + fourStarList.toString());
-		System.out.println("Five: " + fiveStarList.toString());
-	}
-	
-	//FIXME: used for testing
-	private void printDescriptions() {
-		for(String title : titleList) {
-			System.out.println("\nTitle: " + title);
-			System.out.println("Description: " + movieHash.get(title).getDescription());
-			System.out.println("Cover Photo: " + movieHash.get(title).getCoverPhotoPath());
 		}
 	}
 	
@@ -937,7 +961,7 @@ public class MainWindow extends JFrame {
 					movie.setCoverPhoto(coverPhoto);
 					movie.setCoverPhotoPath(fileChooser.getSelectedFile().getAbsolutePath());
 				} catch (Exception e) {
-					// TODO: handle exception
+					
 				}
 			}
 		    JOptionPane.showMessageDialog(contentPane, "Cover photo added!");
