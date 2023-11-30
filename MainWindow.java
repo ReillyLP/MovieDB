@@ -961,7 +961,7 @@ public class MainWindow extends JFrame {
 					movie.setCoverPhoto(coverPhoto);
 					movie.setCoverPhotoPath(fileChooser.getSelectedFile().getAbsolutePath());
 				} catch (Exception e) {
-					
+					JOptionPane.showMessageDialog(contentPane, "ERROR: Unable to add cover photo.");
 				}
 			}
 		    JOptionPane.showMessageDialog(contentPane, "Cover photo added!");
