@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -48,7 +49,7 @@ public class MainWindow extends JFrame {
 	//Each list contains Movie titles to be used as keys to access HashMap
 	private ArrayList<String> actionList, horrorList, comedyList, documentaryList, sciFiList;
 	private ArrayList<String> fantasyList, thrillerList, dramaList, otherList, titleList;
-	private ArrayList<String> oneStarList, twoStarList, threeStarList, fourStarList, fiveStarList; 
+	private ArrayList<String> oneStarList, twoStarList, threeStarList, fourStarList, fiveStarList;
 	
 	/**
 	 * Launch the application.
@@ -546,9 +547,8 @@ public class MainWindow extends JFrame {
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				File savedMovies = new File("SavedMovies.txt");
-
+				//If destination file exists but is empty, overwrites file (prevents "File is empty" message from loadFile() in below "Overwrite" option)
 				if(savedMovies.exists()) {
-					//If destination file is empty, overwrites file (prevents "File is empty" message from loadFile() in below "Overwrite" option)
 					if(savedMovies.length() == 0) {
 						saveToFile(savedMovies, true);
 						return;
@@ -620,6 +620,16 @@ public class MainWindow extends JFrame {
 		}
 		
 		File savedMovies = new File("SavedMovies.txt");
+		if(!savedMovies.exists()) {
+			JOptionPane.showMessageDialog(contentPane, "ERROR: File not found! \nCreating new file...");
+			try {
+				savedMovies.createNewFile();
+				JOptionPane.showMessageDialog(contentPane, "New file successfully created!");
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(contentPane, "ERROR: Failed to create database file");
+			}
+			return;
+		}
 		Scanner fileReader;
 		boolean hasFormatError = false;
 		
@@ -745,6 +755,14 @@ public class MainWindow extends JFrame {
 	}
 	
 	private void saveToFile(File saveFile, boolean overwriteRequested) {
+		if(!saveFile.exists()) {
+			try {
+				saveFile.createNewFile();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(contentPane, "ERROR: Unable to create database file");
+			}
+		}
+		
 		try {
 			PrintWriter saveToTxt = new PrintWriter(saveFile);
 			//Print title, genre, and rating of each Movie on a separate line
