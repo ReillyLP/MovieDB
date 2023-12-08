@@ -1,3 +1,17 @@
+/** 
+This class represents the main window of the application, providing a graphical user interface
+for users to interact with the movie database. It includes features for adding, searching, and
+managing movie entries. The GUI is developed using Java Swing components.
+Traceability to Requirements:
+- Req. 3.1.1, 3.1.2
+- Req 3.2.1, 3.2.2, 3.2.3
+- Req. 3.3.1, 3.3.2
+- Req. 3.4.2
+- Req. 3.5.1, 3.5.2
+- Req. 3.6.1
+*/
+
+
 package main;
 
 import java.awt.EventQueue;
@@ -37,28 +51,43 @@ import java.io.PrintWriter;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+/** 
+The MainWindow class extends JFrame and serves as the main window of the application. 
+It includes various Swing compeonents for user interaction and manages overall functionality
+of the User-Generated Movie Database.
+*/
+
 public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, welcomePanel, entryPanel;
 	final int MAX_LIST_SIZE = 50;
-	//HashMap used to store Movie objects using their titles as keys
-	//Initial max. capacity of 50 Movies
+	// HashMap used to store Movie objects using their titles as keys
+	// Initial max. capacity of 50 Movies
 	private HashMap<String, Movie> movieHash = new HashMap<String, Movie>(MAX_LIST_SIZE);
 	
-	//Each list contains Movie titles to be used as keys to access HashMap
+	// Each list contains Movie titles to be used as keys to access HashMap
 	private ArrayList<String> actionList, horrorList, comedyList, documentaryList, sciFiList;
 	private ArrayList<String> fantasyList, thrillerList, dramaList, otherList, titleList;
 	private ArrayList<String> oneStarList, twoStarList, threeStarList, fourStarList, fiveStarList;
 	
 	/**
-	 * Launch the application.
+	The main method serves as the entry point for the User-Generated Movie Database Application.
+	It initializes the main window by creating an instance of the MainWindow class and making it visible.
+ 	The method uses EventQueue.invokeLater to ensure the GUI is constructed and modified on the 
+	Event Dispatch Thread to avoid potential thread-safety issues.
+	Traceability to Requirements:
+ 	- Req. 2.1, 2.2, 2.3
 	 */
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					// Creating an instance of the MainWindow class
 					MainWindow frame = new MainWindow();
+					
+					// Making main window visible
 					frame.setVisible(true);					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -68,10 +97,14 @@ public class MainWindow extends JFrame {
 	}
 
 	/**
-	 * Create the frame.
+	The constructor initializes the main components of the User-Generated Movie Database Application.
+  	It sets up data structures, creates the main window, and initializes the welcome and entry panels.
+	Traceability to Requirements:
+	Req 3.1, 3.2, 3.3
 	 */
 
 	public MainWindow() {
+		// Initialization of data structures
 		movieHash = new HashMap<String, Movie>(MAX_LIST_SIZE);
 		actionList = new ArrayList<String>(MAX_LIST_SIZE);
 		horrorList = new ArrayList<String>(MAX_LIST_SIZE);
@@ -89,7 +122,8 @@ public class MainWindow extends JFrame {
 		threeStarList = new ArrayList<String>(MAX_LIST_SIZE);
 		fourStarList = new ArrayList<String>(MAX_LIST_SIZE);
 		fiveStarList = new ArrayList<String>(MAX_LIST_SIZE);
-				
+		
+		// Setting up main window properties		
 		setResizable(false);
 		setTitle("MainWindow");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -111,7 +145,7 @@ public class MainWindow extends JFrame {
 		welcomePanel.setEnabled(true);
 		welcomePanel.setVisible(true);
 		
-		
+		// Entry panel setup
 		entryPanel = new JPanel();
 		entryPanel.setVisible(false);
 		entryPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -121,6 +155,7 @@ public class MainWindow extends JFrame {
 		
 		contentPane.add(entryPanel);
 		
+		// Labels and buttons for the welcome panel
 		JLabel lblWelcome = new JLabel("Welcome!");
 		lblWelcome.setHorizontalAlignment(SwingConstants.CENTER);
 		lblWelcome.setFont(new Font("Tahoma", Font.BOLD, 22));
@@ -178,7 +213,8 @@ public class MainWindow extends JFrame {
 				loadFile(false, true);
 			}
 		});
-		
+
+		// Text area, lists, labels for entry panel
 		JTextArea textAreaMovieTitle = new JTextArea();
 		textAreaMovieTitle.setAlignmentY(Component.TOP_ALIGNMENT);
 		textAreaMovieTitle.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -188,7 +224,7 @@ public class MainWindow extends JFrame {
 		textAreaMovieTitle.setBounds(159, 57, 221, 71);
 		entryPanel.add(textAreaMovieTitle);
 
-		//Creates a list model of genres to be displayed to user via JList
+		// Creates a list model of genres to be displayed to user via JList
 		DefaultListModel<String> listModGenre = new DefaultListModel<String>();
 		
 		listModGenre.addElement("Action");
@@ -201,8 +237,8 @@ public class MainWindow extends JFrame {
 		listModGenre.addElement("Drama");
 		listModGenre.addElement("Other");
 		
-		//List allows for one genre to be chosen by user
-		//May be updated at a later time to allow for multiple genres
+		// List allows for one genre to be chosen by user
+		// May be updated at a later time to allow for multiple genres
 		JList<String> listGenre = new JList<String>(listModGenre);
 		listGenre.setBounds(50, 169, 150, 106);
 		listGenre.setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -313,7 +349,8 @@ public class MainWindow extends JFrame {
 				}
 					}
 				});
-	
+		
+		// Menu bar setup
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 542, 22);
 		
@@ -399,7 +436,7 @@ public class MainWindow extends JFrame {
 			}
 		});
 		
-		//Creates Star Ratings for byRating Menu
+		// Creates Star Ratings for byRating Menu
 		JMenuItem oneStarMenuItem = new JMenuItem("*");
 		oneStarMenuItem.setFont(new Font("Tahoma", Font.BOLD, 16));
 		oneStarMenuItem.addActionListener(new ActionListener() {
@@ -515,23 +552,25 @@ public class MainWindow extends JFrame {
 		menuBar.add(viewMenu);
 		menuBar.add(searchMenu);
 		menuBar.add(windowMenu);
-		
+
+		// Adding components to the entry panel
 		entryPanel.add(menuBar);
-		
+
+		// ActionListener for the Load menu item
 		loadMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//If database contains movies, asks user if they would like to
-				//overwrite the current database, or add movies from the file to the database
+				// If database contains movies, asks user if they would like to
+				// overwrite the current database, or add movies from the file to the database
 				if(!movieHash.isEmpty()) {
 					String[] loadOptions = {"Overwrite", "Add", "Cancel"};
 					int userChoice = JOptionPane.showOptionDialog(contentPane, "You currently have movies in the database!\n"
 							+ "Would you like to overwrite your database with the saved file\n or add the file to your database?", 
 							"Load File", 0, 3, null, loadOptions, loadOptions[0]);
-					//Overwrite current database
+					// Overwrite current database
 					if(userChoice==0) {
 						loadFile(true, true);
 					}
-					//Add file to database
+					// Add file to database
 					else if(userChoice==1){
 						loadFile(false, true);
 					}
@@ -543,11 +582,12 @@ public class MainWindow extends JFrame {
 			}
 
 		});
-		
+
+		// ActionListener for the Save menu item
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				File savedMovies = new File("SavedMovies.txt");
-				//If destination file exists but is empty, overwrites file (prevents "File is empty" message from loadFile() in below "Overwrite" option)
+				// If destination file exists but is empty, overwrites file (prevents "File is empty" message from loadFile() in below "Overwrite" option)
 				if(savedMovies.exists()) {
 					if(savedMovies.length() == 0) {
 						saveToFile(savedMovies, true);
@@ -558,11 +598,11 @@ public class MainWindow extends JFrame {
 					int userChoice = JOptionPane.showOptionDialog(contentPane, "A saved database already exists!\n"
 							+ "Would you like to overwrite the previous database file\n or add your current movies to the file?", 
 							"Save to File", 0, 3, null, saveOptions, saveOptions[0]);
-					//Overwrites file
+					// Overwrites file
 					if (userChoice == 0) {
 						saveToFile(savedMovies, true);
 					}
-					//Adds database to file
+					// Adds database to file
 					else if(userChoice == 1) {
 						//Loads file to database, then saves combined database back to file
 						loadFile(false, false);
@@ -571,7 +611,8 @@ public class MainWindow extends JFrame {
 				}
 			}
 		});
-		
+
+		// ActionListener for the Clean menu item 
 		clearMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int userChoice = JOptionPane.showConfirmDialog(contentPane, "Are you sure?\n This will delete all current database content."
@@ -583,12 +624,20 @@ public class MainWindow extends JFrame {
 				}
 			}
 		});		
-	}//End of default constructor
+	} //End of default constructor
 	
 	//Beginning of methods
 	
-	//Clears HashMap and all lists from current database
+	/** 
+ 	This method clears all data structures used in the User-Generated Movie Datanase,
+  	including the main HashMap storing Movie objects and various lists categorized byb genre,
+   	star rating, and movie title.
+	Traceability to Requirements:
+ 	- Req. 3.3
+ 	*/
+	
 	private void clearDB() {
+		// Clearing the main HashMap and category lists
 		movieHash.clear();
 		actionList.clear();
 		horrorList.clear();
@@ -600,16 +649,24 @@ public class MainWindow extends JFrame {
 		dramaList.clear();
 		otherList.clear();
 		titleList.clear();
-		
+
+		// Clearing sar rating lists
 		oneStarList.clear();
 		twoStarList.clear();
 		threeStarList.clear();
 		fourStarList.clear();
 		fiveStarList.clear();
 	}
-	//Loads .txt file contents into HashMap
+	/**
+	This method reads movie data from a file, validates the format, and adds the movie to the 
+ 	User-Generated Movie Database. It also handles cases where the database is overwritten or 
+	additional movies are added.
+	Traceability to Requirements:
+ 	- Req. 3.1
+  	*/
+	
 	private void loadFile(boolean overwriteRequested, boolean successMsgRequested) {		
-		//Overwrites current database with contents in load file by first clearing database 
+		// Overwrites current database with contents in load file by first clearing database 
 		if(overwriteRequested) {
 			this.clearDB();
 		}
@@ -635,10 +692,10 @@ public class MainWindow extends JFrame {
 		
 		try {
 			fileReader = new Scanner(savedMovies);
-			//Ends load process if file is blank
+			// Ends load process if file is blank
 			if(!fileReader.hasNextLine()) {
 				fileReader.close();
-				//If attempting to load file to empty application database, warns user that file is empty
+				// If attempting to load file to empty application database, warns user that file is empty
 				if(movieHash.isEmpty()) {
 					JOptionPane.showMessageDialog(contentPane, "ERROR: No data found in file!");
 					hasFormatError = true;
@@ -646,7 +703,7 @@ public class MainWindow extends JFrame {
 				}
 			}
 			
-			//Used when photo could not be found
+			// Used when photo could not be found
 			boolean hasPhotoError = false;
 			
 			while(fileReader.hasNextLine()) {
@@ -659,12 +716,12 @@ public class MainWindow extends JFrame {
 				String movieData = fileReader.nextLine();
 
 				
-				//Splits line into individual movie variables
-				//Tilde ( ~ ) used to split values to prevent splitting of titles containing commas
-				//Elements are as follows: [0]==title, [1]==genre, [2]==starRating [3]==description [4]==coverPhotoPath
+				// Splits line into individual movie variables
+				// Tilde ( ~ ) used to split values to prevent splitting of titles containing commas
+				// Elements are as follows: [0]==title, [1]==genre, [2]==starRating [3]==description [4]==coverPhotoPath
 				String[] movieVars = movieData.split(" ~ ");
 				
-				//Checks whether valid amount of variables has been given
+				// Checks whether valid amount of variables has been given
 				if(movieVars.length != 5) {
 					fileReader.close();
 					hasFormatError = true;
@@ -673,7 +730,7 @@ public class MainWindow extends JFrame {
 				}
 				
 				int starRating = Integer.parseInt(movieVars[2]);
-				//Ends load process if starRating is not valid (between 1-5)
+				// Ends load process if starRating is not valid (between 1-5)
 				if(starRating > 5 || starRating < 1) {
 					JOptionPane.showMessageDialog(contentPane, "ERROR: Unable to load file. "
 							+ "Star Rating for one or more movies is outside of valid range.");
@@ -691,8 +748,8 @@ public class MainWindow extends JFrame {
 						BufferedImage bi = ImageIO.read(new File(movie.getCoverPhotoPath()));
 						movie.setCoverPhoto(bi);
 					} catch (Exception e) {
-						//Only displays error message if it hasn't been displayed before
-						//Prevents excessive message pop-ups
+						// Only displays error message if it hasn't been displayed before
+						// Prevents excessive message pop-ups
 						if(!hasPhotoError) {
 							JOptionPane.showMessageDialog(this, "ERROR: Cannot locate one or more previous cover photos! "
 									+ "\nPlease verify that photo location has not changed since database file was created.");
@@ -702,12 +759,13 @@ public class MainWindow extends JFrame {
 					}
 				}
 				
-				//Adds each Movie to the HashMap
+				// Adds each Movie to the HashMap
 				this.movieHash.put(title, movie);
-				//Adds each Movie to the titleList after verifying that it is not already present
+				// Adds each Movie to the titleList after verifying that it is not already present
 				if(!this.titleList.contains(title)) {
 					this.titleList.add(title);
 				}
+				
 				/*
 				 * NOTE: If title is already present in titleList, duplicate movie entries
 				 * will overwrite the existing movie's genre and rating in the HashMap 
@@ -715,7 +773,7 @@ public class MainWindow extends JFrame {
 				 */
 			}
 			
-			//If invalid format was given, load process is ended, and error message is displayed
+			// If invalid format was given, load process is ended, and error message is displayed
 			if(hasFormatError) {
 				fileReader.close();
 				JOptionPane.showMessageDialog(contentPane, "File load failed!"
@@ -724,7 +782,7 @@ public class MainWindow extends JFrame {
 				return;
 			}
 			
-			//End of file read
+			// End of file read
 			if(overwriteRequested) {
 				JOptionPane.showMessageDialog(this, "Database Overwrite Successful!");
 			}
@@ -738,7 +796,7 @@ public class MainWindow extends JFrame {
 				}
 				
 			}
-			//After file has successfully loaded, update lists with new movies
+			// After file has successfully loaded, update lists with new movies
 			for(String title : titleList) {
 				try {
 					Movie movie = movieHash.get(title);
@@ -753,7 +811,13 @@ public class MainWindow extends JFrame {
 					"ERROR: File Not Found");
 		}
 	}
-	
+
+	/** 
+	This method saves the movie data from the User-Generated Movie Database to a specific file.
+	It includes an option to overwrite the existing file or create a new one.
+	Traceability to Requirments:
+ 	- Req. 3.1
+	*/		
 	private void saveToFile(File saveFile, boolean overwriteRequested) {
 		if(!saveFile.exists()) {
 			try {
@@ -765,7 +829,7 @@ public class MainWindow extends JFrame {
 		
 		try {
 			PrintWriter saveToTxt = new PrintWriter(saveFile);
-			//Print title, genre, and rating of each Movie on a separate line
+			// Print title, genre, and rating of each Movie on a separate line
 			Movie tempMovie;
 			for(String title : titleList) {
 				tempMovie = movieHash.get(title);
@@ -787,12 +851,20 @@ public class MainWindow extends JFrame {
 					"ERROR: Unable to Save Movies to File");
 		}
 	}
+
+	/**
+	This method categorizes a Movie and adds its title to the corresponding genre and rating lists.
+	If the title is already present in a list, it won't be added again.
+ 	Traceability to Requirements:
+  	- Req. 2.1
+	*/
 	
 	private void addToCategoryLists(Movie movie) {
 		String genre = movie.getGenre();
 		int rating = movie.getStarRating();
 		String title = movie.getTitle();
-		
+
+		// Categorize by genre
 		switch(genre) {
 			case "Action":
 				addIfNew(actionList, title);
@@ -824,7 +896,8 @@ public class MainWindow extends JFrame {
 			default:
 				addIfNew(otherList, title);				
 		}
-		
+
+		// Categorize by rating
 		switch(rating) {
 		case 1:
 			addIfNew(oneStarList,title);
@@ -843,14 +916,26 @@ public class MainWindow extends JFrame {
 		}
 	}
 	
-	//Adds String to ArrayList if it is not already present
+	/**
+	This method checks if the specified item is already present in the given ArrayList.
+	If the item is not present, it is added to the ArrayList.
+	Traceability to Requirements:
+ 	- Req. 2.1
+	*/
 	private void addIfNew(ArrayList<String> arrLst, String str) {
 		if(!arrLst.contains(str)) {
 			arrLst.add(str);
 		}
 	}
 	
-	//Prompts user for custom description of movie
+	/** 
+	This method displays a confirmation dialog to the user, asking if they want to
+ 	enter a custom description for the movie. If the user chooses 'Yes', it prompts
+  	for input, allowing them to enter a brief custom description. If the user chooses 
+   	'No' or cancels the operation, it returns a default value "N/A".
+    	Traceability to Requirements:
+     	- Req. 2.2
+	*/
 	private String getDescription() {
 		int userChoice = JOptionPane.showConfirmDialog(contentPane, "Would you like to enter"
 				+ " a custom description of this movie?", "Custom Description",
@@ -862,12 +947,21 @@ public class MainWindow extends JFrame {
 			return "N/A";
 		}
 	}
-	
+
+	/**
+	This method takes a Movie object as a paramete and removes its title from
+	category-specific lists, such as genre-based lists (e.g., Horror, Comedy) and
+	star rating-based lists (e.g., five stars, one star). Itt ensures that the movie is 
+ 	appropriately removed from the corresponding lists to maintain data consistency.
+	Traceability to Requirements:
+ 	- Req. 3.1
+	*/ 
 	private void removeFromCategoryLists(Movie movie) {
 		String genre = movie.getGenre();
 		int rating = movie.getStarRating();
 		String title = movie.getTitle();
 		
+		// Remove the title from the appropriate genre-based list
 		switch(genre) {
 			case "Action":
 				actionList.remove(title);
@@ -899,7 +993,8 @@ public class MainWindow extends JFrame {
 			default:
 				otherList.remove(title);
 		}
-		
+
+		// Remove the title from the appropriate star rating-based list
 		switch(rating) {
 		case 1:
 			oneStarList.remove(title);
@@ -917,91 +1012,159 @@ public class MainWindow extends JFrame {
 			fiveStarList.remove(title);
 		}
 	}
-	
+
+	/**
+	This method takes a Movie object as a parameter and checks if it has a cover photo.
+ 	If a cover photo is present, it creates a custom dialog to display the cover photo 
+  	along with the movie's details, including title, genre, star rating, and description
+	*/
 	private void displayMovieWithPhoto(Movie movie) {
 		if(movie.getCoverPhoto() != null) {
 			JPanel panel = new JPanel();
 			panel.setBackground(entryPanel.getBackground());
-			//Cover photo scaled to a 9:16 size
+			// Cover photo scaled to a 9:16 size
 			ImageIcon coverPhoto = new ImageIcon(movie.getCoverPhoto().getScaledInstance(360, 640, java.awt.Image.SCALE_SMOOTH));
 			JLabel label = new JLabel();
 			label.setIcon(coverPhoto);
 			panel.add(label);
+
+			// Display movie details using a JTextArea with a bold font
 			JTextArea textArea = new JTextArea(movie.toString());
 			textArea.setFont(new Font("Tahoma", Font.BOLD, 14));
 			panel.add(textArea);
-			
+
+			// Show the custom dialog with the cover photo and movie details
 			JOptionPane.showMessageDialog(contentPane, panel, "Movie", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
-	
+
+	/**
+	This method takes a string of text content as a paramete and creates a custom dialog
+ 	to display the text in a JTextArea. The JTextArea is configured with a bold font, and
+  	a JScrollPane is added to enable scrolling if the content exceeds the visible area.
+   	The method ensures that the scroll bar is positioned at the top of the text area.
+    	Traceability to Requirements:
+     	- Req. 4.3
+	*/
 	private void displayTextArea(String displayText) {
 		JTextArea textArea = new JTextArea();
         textArea.setRows(14);
         textArea.setFont(new Font("Tahoma", Font.BOLD, 14));
         textArea.setText(displayText);
-        //Moves scroll bar to top of text area
+		
+        // Moves scroll bar to top of text area
         textArea.setCaretPosition(0);
         textArea.setEditable(false);
-        
+
+	// Create a JScrollPane to enable scrolling
         JScrollPane scrollPane = new JScrollPane(textArea);
-        
+
+	// Show the custom dialog with the scrollable JTextArea
         JOptionPane.showMessageDialog(contentPane, scrollPane, "Display", JOptionPane.PLAIN_MESSAGE);
 	}
 	
-	//Creates a small text area to display a single movie
+	/**
+	This method takes a Movie object as a parameter and extracts textual information about
+ 	the movie using its toString() method. The extracted text is then displayed in a JTextArea
+	within a custom dialog. The JTextArea is configured with a bold font, and a JScrollPane is
+	added to enable scrolling if the contexts exceeds the visible area. The method ensures that
+	the scroll bar is positioned at the top of the text area.
+ 	Traceability to Requirements:
+  	- Req. 4.1
+	*/
 	private void displayMovieText(Movie movie) {
 		JTextArea textArea = new JTextArea();
         textArea.setRows(5);
         textArea.setFont(new Font("Tahoma", Font.BOLD, 14));
+
+	// Extract text information about the movie using toString() method
         textArea.setText(movie.toString());
+		
         //Moves scroll bar to top of text area
         textArea.setCaretPosition(0);
         textArea.setEditable(false);
-        
+
+	// Create a JScrollPane to enable scrolling
         JScrollPane scrollPane = new JScrollPane(textArea);
-        
+
+	// Show the custom dialog with the scrollable JTextArea
         JOptionPane.showMessageDialog(contentPane, scrollPane, "Display", JOptionPane.PLAIN_MESSAGE);
 	}
-	
+
+	/**
+	This method takes a Movie object as a parameter and prompts the user with a confirmation dialog
+ 	to inquire whether they would like to add a cover photo. If the user chooses to do so, a file chooser
+  	dialog is displayed to select an image file (with supported extensions: jpg, jpeg, png) as the cover photo.
+   	Once an image is selected, it is read into a BufferedImage, and both the cover photo and its file path
+    	are set in the Movie object. If any errors occur during the process, an error message is displayed.
+     	Traceability to Requirements:
+      	- Req. 5.1
+	*/
 	private void setCoverPhoto(Movie movie) {
+		// Create a file filter fo image files with supported extensions
 		FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("Images", "jpg", "jpeg", "png");
+
+		// Create a file chooser and add the image filter
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.addChoosableFileFilter(imageFilter);
 		fileChooser.setAcceptAllFileFilterUsed(false);
-		
+
+		// Prompt the user with a confirmation dialog to add a cover photo
 		int userChoice = JOptionPane.showConfirmDialog(contentPane, "Would you like to add a cover photo?",
 				"Cover Photo", JOptionPane.YES_NO_OPTION);
+		
+		// If the user chooses to add a cover photo, proceed with the file chooser
 		if (userChoice == JOptionPane.YES_OPTION) {
+			// Show file chooser dialog and check if the user selects a file
 			if(fileChooser.showOpenDialog(contentPane) == JFileChooser.APPROVE_OPTION) {
 				try {
+					// Read selected image file into BufferedImage
 					BufferedImage coverPhoto = ImageIO.read(fileChooser.getSelectedFile());
+
+					// Set cover photo and its file path in the Movie object
 					movie.setCoverPhoto(coverPhoto);
 					movie.setCoverPhotoPath(fileChooser.getSelectedFile().getAbsolutePath());
+
+					// Display an error message if unableto add the cover photo
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(contentPane, "ERROR: Unable to add cover photo.");
 				}
 			}
+			// Display a success message
 		    JOptionPane.showMessageDialog(contentPane, "Cover photo added!");
 		}
 	}
-		
+
+	/**
+	This method take an ArrayList of movie titles representing a specific category as a parameter. 
+ 	It first sorts the list in alphabetical order. Then, it iterates through the sorted list, fetches
+  	the corresponding Movie objects fromthe HashMap, and appends their detail to a StringBuilder. To
+   	avoid duplicates, the methodchecks whether a title is already present in the StringBuilder before
+    	appending. Once the StringBuilder is populated, it invokes the displayTextArea method to show the
+     	movie details to the user in a scrollable dialog box.
+      	Traceability to Requirements:
+       	- Req. 4.2
+	*/
 	private void displayByCategory(ArrayList<String> categoryList) {
-		//Sorts list in alphabetical order for display
+		// Sorts list in alphabetical order for display
 		categoryList.sort(null); 
-		
+
+		// Initialize a StringBuilder to store movie details for display
 		StringBuilder databaseContent = new StringBuilder();
+		
 	        // Iterate through the categoryList and fetch details from the HashMap
 	        for (String title : categoryList) {
-	        	//Prevents duplicates by checking database for title
-	        	//Does not append to databaseContent if title is already present
+			
+	        	// Prevents duplicates by checking database for title
+	        	// Does not append to databaseContent if title is already present
 	        	if(!databaseContent.toString().contains(title)) {
 	        		Movie movie = movieHash.get(title);
 	        		databaseContent.append(movie.toString() + "\n\n");
 	        	}
 	            
 	        }
-	        
+
+		// Display the movie details in a scrollable dialog box.
 	        displayTextArea(databaseContent.toString());
 	}
 }
